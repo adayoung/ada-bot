@@ -1,0 +1,12 @@
+[Unit]
+Description = ada-bot discord bot service
+Requires=network.target
+
+[Service]
+User=ada-bot
+WorkingDirectory=/home/ada-bot
+ExecStart=/home/ada-bot/go/bin/ada-bot
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
