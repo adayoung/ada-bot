@@ -7,11 +7,12 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	// "time"
+	"time"
 
 	"gopkg.in/yaml.v2"
 
 	"github.com/adayoung/ada-bot/discord"
+	"github.com/adayoung/ada-bot/ire"
 )
 
 type config struct {
@@ -21,7 +22,7 @@ type config struct {
 	}
 
 	IronRealms struct {
-		GameFeed string
+		GamefeedURL string
 	}
 }
 
@@ -56,12 +57,22 @@ func main() {
 		os.Exit(0)
 	}()
 
-	// ticker := time.NewTicker(time.Millisecond * 3000) // 3 second ticker
-	// go func() {
-	// 	for t := range ticker.C {
-	// 		fmt.Println("Tick at", t)
-	// 	}
-	// }()
+	IRE := ire.Gamefeed{}
+
+	ticker := time.NewTicker(time.Millisecond * 30000) // 30 second ticker
+	go func() {
+		for _ = range ticker.C {
+			if deathsights, err := IRE.Sync(_config.IronRealms.GamefeedURL); err == nil {
+				for _, event := range deathsights {
+					time.Sleep(time.Millisecond * 500) // Wait half a second FIXME: this way is awkward
+					discord.PostMessage(_config.Discord.Channel, fmt.Sprintf("```%s - %s```", event.Date, event.Description))
+				}
+			} else {
+				fmt.Println("ERROR: We couldn't get new deathsights.") // Not a fatal error
+				log.Printf("error: %v", err)
+			}
+		}
+	}()
 
 	fmt.Println("Bot is now running.  Press CTRL-C to exit.")
 	<-make(chan int) // block forever till SIGINT / SIGTERM

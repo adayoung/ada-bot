@@ -41,6 +41,10 @@ func InitDiscordSession(token string) error {
 	return nil
 }
 
+func PostMessage(c string, m string) {
+	_, _ = dg.ChannelMessageSend(c, m)
+}
+
 func CloseDiscordSession() {
 	dg.Close()
 }
