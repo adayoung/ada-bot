@@ -11,7 +11,7 @@ import (
 
 	"gopkg.in/yaml.v2"
 
-	"ada-bot/discord"
+	"github.com/adayoung/ada-bot/discord"
 )
 
 type config struct {
