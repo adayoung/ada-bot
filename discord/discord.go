@@ -5,6 +5,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"log"
 	"math/rand"
+	"regexp"
 	"strings"
 	"time"
 
@@ -104,10 +105,15 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	if strings.HasPrefix(strings.ToLower(m.Content), "!whois") {
 		r_player := strings.ToLower(strings.TrimSpace(m.Content[7:]))
-		if strings.HasPrefix(r_player, "<@!") { // It's a @mention and requires fetching a 'Nick'
-			if member, err := s.State.Member(GuildID, r_player[3:len(r_player)-1]); err == nil {
+		if strings.HasPrefix(r_player, "<@") { // It's a @mention and requires fetching a 'Nick'
+			filter_exp := regexp.MustCompile("[^0-9]+") // A userID is numbers only, we shall filter!
+			r_player = filter_exp.ReplaceAllString(r_player, "") // Get rid of anything but numbers
+			if member, err := s.State.Member(GuildID, r_player); err == nil {
 				if member != nil {
 					r_player = member.Nick
+					if r_player == "" {
+						r_player = member.User.Username
+					}
 				}
 			} else {
 				log.Printf("error: %v", err) // Not a fatal error, r_player is left unmodified

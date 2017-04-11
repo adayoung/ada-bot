@@ -3,8 +3,8 @@ Hi! This is ada-bot, a robot for Achaea's Discord channel. It's very basic at th
 
 ## Prerequisites
 
- * [gopkg.in/yaml.v2](gopkg.in/yaml.v2)
- * [DiscordGo](github.com/bwmarrin/discordgo)
+ * [gopkg.in/yaml.v2](https://gopkg.in/yaml.v2)
+ * [DiscordGo](https://github.com/bwmarrin/discordgo)
 
 ## How to use
 
