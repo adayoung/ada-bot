@@ -41,14 +41,14 @@ func InitDiscordSession(token string) error {
 		return err // Error at creating a new Discord session
 	}
 
-	mqc = make(chan bool, 1)
+	messageQueue = make(chan message, 10)
 	go dispatchMessages()
 	return nil
 }
 
 func PostMessage(c string, m string) {
-	mq.Messages = append(mq.Messages, message{ChannelID: c, Message: m})
-	mqc <- true // Wakkie wakkie! Wakes up dispatcher goroutine
+	mq := message{ChannelID: c, Message: m}
+	messageQueue <- mq
 }
 
 func CloseDiscordSession() {
