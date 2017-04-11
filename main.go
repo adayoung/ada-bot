@@ -67,7 +67,6 @@ func main() {
 		for _ = range ticker.C {
 			if deathsights, err := IRE.Sync(); err == nil {
 				for _, event := range deathsights {
-					time.Sleep(time.Millisecond * 500) // Wait half a second FIXME: this way is awkward
 					discord.PostMessage(_config.Discord.Channel, fmt.Sprintf("```%s - %s```", event.Date, event.Description))
 				}
 			} else {

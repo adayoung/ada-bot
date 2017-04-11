@@ -41,11 +41,14 @@ func InitDiscordSession(token string) error {
 		return err // Error at creating a new Discord session
 	}
 
+	mqc = make(chan bool, 1)
+	go dispatchMessages()
 	return nil
 }
 
 func PostMessage(c string, m string) {
-	_, _ = dg.ChannelMessageSend(c, m)
+	mq.Messages = append(mq.Messages, message{ChannelID: c, Message: m})
+	mqc <- true // Wakkie wakkie! Wakes up dispatcher goroutine
 }
 
 func CloseDiscordSession() {
@@ -81,7 +84,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		if c.GuildID == "" {
 			fmt.Printf("Message received from %s: %s\n", m.Author.Username, m.Content)
 			if strings.ToLower(m.Content) == "ping" {
-				_, _ = s.ChannelMessageSend(m.ChannelID, "Pong!")
+				PostMessage(m.ChannelID, "Pong!")
 				return
 			}
 		} else {
@@ -90,23 +93,23 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 
 	if strings.ToLower(m.Content) == "!ping" {
-		_, _ = s.ChannelMessageSend(m.ChannelID, "Pong!")
+		PostMessage(m.ChannelID, "Pong!")
 	}
 
 	if strings.ToLower(m.Content) == "!pink" {
-		_, _ = s.ChannelMessageSend(m.ChannelID, "I love pink!")
+		PostMessage(m.ChannelID, "I love pink!")
 	}
 
 	if strings.HasPrefix(strings.ToLower(m.Content), "!decide") {
 		choices := strings.Split(m.Content[8:], " or ")
 		the_answer := choices[rand.Intn(len(choices))]
-		_, _ = s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("The correct answer is **%s**", the_answer))
+		PostMessage(m.ChannelID, fmt.Sprintf("The correct answer is **%s**", the_answer))
 	}
 
 	if strings.HasPrefix(strings.ToLower(m.Content), "!whois") {
 		r_player := strings.ToLower(strings.TrimSpace(m.Content[7:]))
 		if strings.HasPrefix(r_player, "<@") { // It's a @mention and requires fetching a 'Nick'
-			filter_exp := regexp.MustCompile("[^0-9]+") // A userID is numbers only, we shall filter!
+			filter_exp := regexp.MustCompile("[^0-9]+")          // A userID is numbers only, we shall filter!
 			r_player = filter_exp.ReplaceAllString(r_player, "") // Get rid of anything but numbers
 			if member, err := s.State.Member(GuildID, r_player); err == nil {
 				if member != nil {
@@ -122,9 +125,9 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 		if g_player, err := ire.GetPlayer(r_player); err == nil {
 			if g_player != nil {
-				_, _ = s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("```%s```", g_player))
+				PostMessage(m.ChannelID, fmt.Sprintf("```%s```", g_player))
 			} else {
-				_, _ = s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("Oops, I couldn't find %s :frowning:", r_player))
+				PostMessage(m.ChannelID, fmt.Sprintf("Oops, I couldn't find %s :frowning:", r_player))
 			}
 		} else {
 			log.Printf("error: %v", err) // Not a fatal error
@@ -137,6 +140,6 @@ I have the following commands available:
 !ping                  - Pong!
 !whois <name>          - Lookup <name> in game and report findings.
 !decide thing or thang - Let the bot decide between two or more things for you!`
-		_, _ = s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("```%s```", help_text))
+		PostMessage(m.ChannelID, fmt.Sprintf("```%s```", help_text))
 	}
 }
