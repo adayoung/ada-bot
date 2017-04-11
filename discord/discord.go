@@ -7,6 +7,8 @@ import (
 	"math/rand"
 	"strings"
 	"time"
+
+	"github.com/adayoung/ada-bot/ire"
 )
 
 var BotID string
@@ -94,5 +96,18 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		choices := strings.Split(m.Content[8:], " or ")
 		the_answer := choices[rand.Intn(len(choices))]
 		_, _ = s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("The correct answer is **%s**", the_answer))
+	}
+
+	if strings.HasPrefix(strings.ToLower(m.Content), "!whois") {
+		r_player := strings.ToLower(strings.TrimSpace(m.Content[7:]))
+		if g_player, err := ire.GetPlayer(r_player); err == nil {
+			if g_player != nil {
+				_, _ = s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("```%s```", g_player))
+			} else {
+				_, _ = s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("Oops, I couldn't find %s :(", r_player))
+			}
+		} else {
+			log.Printf("error: %v", err) // Not a fatal error
+		}
 	}
 }

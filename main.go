@@ -22,7 +22,7 @@ type config struct {
 	}
 
 	IronRealms struct {
-		GamefeedURL string
+		APIURL string
 	}
 }
 
@@ -30,7 +30,9 @@ var _config config
 
 func init() {
 	if data, err := ioutil.ReadFile("env.yaml"); err == nil {
-		if err := yaml.Unmarshal([]byte(data), &_config); err != nil {
+		if err := yaml.Unmarshal([]byte(data), &_config); err == nil {
+			ire.APIURL = _config.IronRealms.APIURL
+		} else {
 			fmt.Println("ERROR: Error with parsing env.yaml.")
 			log.Fatalf("error: %v", err)
 		}
@@ -62,7 +64,7 @@ func main() {
 	ticker := time.NewTicker(time.Millisecond * 30000) // 30 second ticker
 	go func() {
 		for _ = range ticker.C {
-			if deathsights, err := IRE.Sync(_config.IronRealms.GamefeedURL); err == nil {
+			if deathsights, err := IRE.Sync(); err == nil {
 				for _, event := range deathsights {
 					time.Sleep(time.Millisecond * 500) // Wait half a second FIXME: this way is awkward
 					discord.PostMessage(_config.Discord.Channel, fmt.Sprintf("```%s - %s```", event.Date, event.Description))
