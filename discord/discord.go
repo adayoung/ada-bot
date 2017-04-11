@@ -72,6 +72,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
+	var GuildID string
 	if c, err := s.State.Channel(m.ChannelID); err != nil {
 		fmt.Println("Oops, error at getting session.State.Channel,", err)
 		return // Not a fatal error
@@ -80,7 +81,10 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			fmt.Printf("Message received from %s: %s\n", m.Author.Username, m.Content)
 			if strings.ToLower(m.Content) == "ping" {
 				_, _ = s.ChannelMessageSend(m.ChannelID, "Pong!")
+				return
 			}
+		} else {
+			GuildID = c.GuildID
 		}
 	}
 
@@ -100,6 +104,16 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	if strings.HasPrefix(strings.ToLower(m.Content), "!whois") {
 		r_player := strings.ToLower(strings.TrimSpace(m.Content[7:]))
+		if strings.HasPrefix(r_player, "<@!") { // It's a @mention and requires fetching a 'Nick'
+			if member, err := s.State.Member(GuildID, r_player[3:len(r_player)-1]); err == nil {
+				if member != nil {
+					r_player = member.Nick
+				}
+			} else {
+				log.Printf("error: %v", err) // Not a fatal error, r_player is left unmodified
+			}
+		}
+
 		if g_player, err := ire.GetPlayer(r_player); err == nil {
 			if g_player != nil {
 				_, _ = s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("```%s```", g_player))
