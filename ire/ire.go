@@ -79,14 +79,14 @@ type Player struct {
 
 func (s *Player) String() string {
 	player := fmt.Sprintf(`
-		           Name: %s
-		          Class: %s (Level %s)
-		           City: %s
-		          House: %s
-		    Kills (Mob): %s
-		Kills (Players): %s
-		      Rank (XP): %s
-		Rank (Explorer): %s`,
+           Name: %s
+          Class: %s (Level %s)
+           City: %s
+          House: %s
+    Kills (Mob): %s
+Kills (Players): %s
+      Rank (XP): %s
+Rank (Explorer): %s`,
 		s.Fullname, strings.Title(s.Class), s.Level,
 		strings.Title(s.City), strings.Title(s.House),
 		s.MobKills, s.PlayerKills, s.XPRank, s.ExplorerRank)

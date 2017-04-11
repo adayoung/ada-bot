@@ -104,10 +104,19 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			if g_player != nil {
 				_, _ = s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("```%s```", g_player))
 			} else {
-				_, _ = s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("Oops, I couldn't find %s :(", r_player))
+				_, _ = s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("Oops, I couldn't find %s :frowning:", r_player))
 			}
 		} else {
 			log.Printf("error: %v", err) // Not a fatal error
 		}
+	}
+
+	if strings.ToLower(m.Content) == "!help" {
+		help_text := `
+I have the following commands available:
+!ping                  - Pong!
+!whois <name>          - Lookup <name> in game and report findings.
+!decide thing or thang - Let the bot decide between two or more things for you!`
+		_, _ = s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("```%s```", help_text))
 	}
 }

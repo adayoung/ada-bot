@@ -61,6 +61,7 @@ func main() {
 
 	IRE := ire.Gamefeed{}
 
+	discord.PostMessage(_config.Discord.Channel, "```---------- ada-bot restarting ... ----------```")
 	ticker := time.NewTicker(time.Millisecond * 30000) // 30 second ticker
 	go func() {
 		for _ = range ticker.C {
