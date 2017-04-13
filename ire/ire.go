@@ -6,6 +6,8 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+
+	"github.com/adayoung/ada-bot/settings"
 )
 
 var APIURL string
@@ -32,11 +34,17 @@ func (d EventsByDate) Less(i, j int) bool {
 
 func (g *Gamefeed) Sync() ([]Event, error) {
 	url := fmt.Sprintf("%s/gamefeed.json", APIURL)
+	g.LastID = settings.Settings.IRE.LastID
 	if g.LastID > 0 {
 		url = fmt.Sprintf("%s?id=%d", url, g.LastID)
 	}
 
 	var deathsights []Event
+
+	if !settings.Settings.IRE.DeathsightEnabled { // Oops, we're disabled, bail out
+		return deathsights, nil
+	}
+
 	if err := getJSON(url, &g.Events); err == nil {
 		for _, event := range *g.Events {
 			if event.ID > g.LastID {
@@ -51,6 +59,7 @@ func (g *Gamefeed) Sync() ([]Event, error) {
 		return nil, err // Error at http.Get() call
 	}
 
+	settings.Settings.IRE.LastID = g.LastID
 	sort.Sort(EventsByDate(deathsights))
 	return deathsights, nil
 }

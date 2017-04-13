@@ -70,6 +70,9 @@ func main() {
 		<-c
 		fmt.Println("Interrupt received, cleaning up...")
 		discord.CloseDiscordSession()
+		if err := settings.Settings.Save(); err != nil {
+			log.Fatalf("error: %v", err)
+		}
 		os.Exit(0)
 	}()
 
@@ -84,8 +87,8 @@ func main() {
 					discord.PostMessage(_config.Discord.Channel, fmt.Sprintf("```%s - %s```", event.Date, event.Description))
 				}
 			} else {
-				fmt.Println("ERROR: We couldn't get new deathsights.") // Not a fatal error
-				log.Printf("error: %v", err)
+				fmt.Println("ERROR: We couldn't get new deathsights.")
+				log.Printf("error: %v", err) // Not a fatal error
 			}
 		}
 	}()
