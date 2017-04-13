@@ -13,6 +13,7 @@ import (
 
 	"github.com/adayoung/ada-bot/discord"
 	"github.com/adayoung/ada-bot/ire"
+	"github.com/adayoung/ada-bot/settings"
 )
 
 type config struct {
@@ -26,6 +27,8 @@ type config struct {
 	IronRealms struct {
 		APIURL string
 	}
+
+	SettingsFile string
 }
 
 var _config config
@@ -40,6 +43,11 @@ func init() {
 		}
 	} else {
 		fmt.Println("ERROR: The file 'env.yaml' could not be read.")
+		log.Fatalf("error: %v", err)
+	}
+
+	if err := settings.Init(_config.SettingsFile); err != nil {
+		fmt.Printf("ERROR: The settings file, '%s' could not be processed.\n", _config.SettingsFile)
 		log.Fatalf("error: %v", err)
 	}
 }
