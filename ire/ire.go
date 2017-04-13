@@ -1,7 +1,9 @@
 package ire
 
 import (
+	"errors"
 	"fmt"
+	"regexp"
 	"sort"
 	"strings"
 )
@@ -83,12 +85,21 @@ Rank (Explorer): %s`,
 }
 
 func GetPlayer(player string) (*Player, error) {
-	url := fmt.Sprintf("%s/characters/%s.json", APIURL, player)
-	_player := &Player{}
-	if err := getJSON(url, &_player); err == nil {
-		return _player, nil
+	if match, err := regexp.MatchString("(?i)[^a-z]+", player); err == nil {
+		if !match {
+			url := fmt.Sprintf("%s/characters/%s.json", APIURL, player)
+			_player := &Player{}
+			if err := getJSON(url, &_player); err == nil {
+				return _player, nil
+			} else {
+				return nil, err // Error at getJson() call
+			}
+			return _player, nil
+		} else {
+			return nil, errors.New(fmt.Sprintf("Invalid player name supplied: %s", player))
+		}
 	} else {
-		return nil, err
+		return nil, err // Error at regexp.MatchString() call
 	}
-	return _player, nil
+	return nil, nil
 }

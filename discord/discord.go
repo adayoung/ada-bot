@@ -133,12 +133,9 @@ func _botReactions(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 
 		if g_player, err := ire.GetPlayer(r_player); err == nil {
-			if g_player.Name != "" {
-				PostMessage(m.ChannelID, fmt.Sprintf("```%s```", g_player))
-			} else {
-				PostMessage(m.ChannelID, fmt.Sprintf("Oops, I couldn't find %s :frowning:", r_player))
-			}
+			PostMessage(m.ChannelID, fmt.Sprintf("```%s```", g_player))
 		} else {
+			PostMessage(m.ChannelID, fmt.Sprintf("Oops, I couldn't find %s :frowning:", r_player))
 			log.Printf("error: %v", err) // Not a fatal error
 		}
 	}

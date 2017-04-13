@@ -3,6 +3,7 @@ package ire
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"net/http"
 )
@@ -22,7 +23,7 @@ func getJSON(url string, v interface{}) error {
 					return err // Error at ioutil.ReadAll() call
 				}
 			} else {
-				return nil // API call didn't return a player / Non-200 status
+				return errors.New("API call didn't return a player / Non-200 status") // <--
 			}
 		} else {
 			return err // Error at client.Do() call
