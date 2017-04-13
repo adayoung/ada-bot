@@ -19,7 +19,7 @@ func init() {
 	rand.Seed(time.Now().Unix())
 }
 
-func InitDiscordSession(token string) error {
+func InitDiscordSession(token string, q_length int, wait_ms string) error {
 	// Create a new Discord session using the provided login information.
 	var err error
 	if dg, err = discordgo.New(fmt.Sprintf("Bot %s", token)); err == nil {
@@ -41,8 +41,13 @@ func InitDiscordSession(token string) error {
 		return err // Error at creating a new Discord session
 	}
 
-	messageQueue = make(chan message, 10)
-	go dispatchMessages()
+	if _wait_ms, err := time.ParseDuration(wait_ms); err == nil {
+		messageQueue = make(chan message, q_length)
+		rateLimit = time.NewTicker(_wait_ms)
+		go dispatchMessages()
+	} else {
+		return err
+	}
 	return nil
 }
 

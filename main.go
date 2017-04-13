@@ -19,6 +19,8 @@ type config struct {
 	Discord struct {
 		BotKey  string
 		Channel string
+		QLength int
+		WaitMS  string
 	}
 
 	IronRealms struct {
@@ -43,7 +45,11 @@ func init() {
 }
 
 func main() {
-	err := discord.InitDiscordSession(_config.Discord.BotKey)
+	err := discord.InitDiscordSession(
+		_config.Discord.BotKey,
+		_config.Discord.QLength,
+		_config.Discord.WaitMS,
+	)
 	if err != nil {
 		fmt.Println("ERROR: We couldn't initialize a Discord session.")
 		log.Fatalf("error: %v", err)

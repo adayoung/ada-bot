@@ -10,11 +10,12 @@ type message struct {
 }
 
 var messageQueue chan message
+var rateLimit *time.Ticker
 
 func dispatchMessages() {
 	var m message
 	for m = range messageQueue {
 		_, _ = dg.ChannelMessageSend(m.ChannelID, m.Message)
-		time.Sleep(time.Millisecond * 500)
+		<-rateLimit.C
 	}
 }
