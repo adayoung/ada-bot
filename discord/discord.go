@@ -77,6 +77,10 @@ func ready(s *discordgo.Session, r *discordgo.Ready) {
 }
 
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
+	go _botReactions(s, m)
+}
+
+func _botReactions(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.ID == BotID { // ignore the bot's own messages from processing
 		return
 	}
@@ -129,7 +133,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 
 		if g_player, err := ire.GetPlayer(r_player); err == nil {
-			if g_player != nil {
+			if g_player.Name != "" {
 				PostMessage(m.ChannelID, fmt.Sprintf("```%s```", g_player))
 			} else {
 				PostMessage(m.ChannelID, fmt.Sprintf("Oops, I couldn't find %s :frowning:", r_player))

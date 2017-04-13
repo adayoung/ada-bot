@@ -1,6 +1,7 @@
 package ire
 
 import (
+	"bytes"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
@@ -8,7 +9,8 @@ import (
 
 func getJSON(url string, v interface{}) error {
 	client := &http.Client{}
-	if request, err := http.NewRequest("GET", url, nil); err == nil {
+	var data bytes.Buffer
+	if request, err := http.NewRequest("GET", url, &data); err == nil {
 		request.Header.Set("User-Agent", "ada-bot / https://github.com/adayoung/ada-bot")
 		if response, err := client.Do(request); err == nil {
 			if response.StatusCode == 200 {
