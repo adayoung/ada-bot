@@ -1,10 +1,7 @@
 package ire
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 	"sort"
 	"strings"
 )
@@ -38,23 +35,15 @@ func (g *Gamefeed) Sync() ([]Event, error) {
 	}
 
 	var deathsights []Event
-	if response, err := http.Get(url); err == nil {
-		if data, err := ioutil.ReadAll(response.Body); err == nil {
-			if err := json.Unmarshal([]byte(data), &g.Events); err == nil {
-				for _, event := range *g.Events {
-					if event.ID > g.LastID {
-						g.LastID = event.ID
-					}
-
-					if event.Type == "DEA" {
-						deathsights = append(deathsights, event)
-					}
-				}
-			} else {
-				return nil, err // Error at json.Unmarshal() call
+	if err := getJSON(url, &g.Events); err == nil {
+		for _, event := range *g.Events {
+			if event.ID > g.LastID {
+				g.LastID = event.ID
 			}
-		} else {
-			return nil, err // Error at ioutil.ReadAll() call
+
+			if event.Type == "DEA" {
+				deathsights = append(deathsights, event)
+			}
 		}
 	} else {
 		return nil, err // Error at http.Get() call
@@ -96,20 +85,10 @@ Rank (Explorer): %s`,
 func GetPlayer(player string) (*Player, error) {
 	url := fmt.Sprintf("%s/characters/%s.json", APIURL, player)
 	_player := &Player{}
-	if response, err := http.Get(url); err == nil {
-		if response.StatusCode == 200 {
-			if data, err := ioutil.ReadAll(response.Body); err == nil {
-				if err := json.Unmarshal([]byte(data), &_player); err != nil {
-					return nil, err // Error at json.Unmarshal() call
-				}
-			} else {
-				return nil, err // Error at ioutil.ReadAll() call
-			}
-		} else {
-			return nil, nil // API call didn't return a player / Non-200 status
-		}
+	if err := getJSON(url, &_player); err == nil {
+		return _player, nil
 	} else {
-		return nil, err // Error at http.Get() call
+		return nil, err
 	}
 	return _player, nil
 }
