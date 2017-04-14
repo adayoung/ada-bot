@@ -16,4 +16,4 @@ Since I don't actually know how to sensibly lay out a Golang project, here are s
 
 # Bot Reactions
 
-If you're trying to add Bot reactions, please wait for #3 to be resolved. I'll post a uniform format to get the thing working without feeling like fighting an Occultist with a billion hangedman tarots.
+If you're planning to add Bot reactions, please wait for [#3](https://github.com/adayoung/ada-bot/issues/3) to be completed. I'll post a uniform format to get the thing working without it feeling like fighting an Occultist with a billion hangedman tarots!
