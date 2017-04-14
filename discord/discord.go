@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/adayoung/ada-bot/discord/bot_reactions"
 	"github.com/adayoung/ada-bot/ire"
 )
 
@@ -20,6 +21,7 @@ func init() {
 }
 
 func InitDiscordSession(token string, q_length int, wait_ms string) error {
+	fmt.Printf("DEBUG: delete me - %s\n", bot_reactions.HelloWorld()) // DEBUG: delete me
 	// Create a new Discord session using the provided login information.
 	var err error
 	if dg, err = discordgo.New(fmt.Sprintf("Bot %s", token)); err == nil {
@@ -91,11 +93,7 @@ func _botReactions(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return // Not a fatal error
 	} else {
 		if c.GuildID == "" {
-			fmt.Printf("Message received from %s: %s\n", m.Author.Username, m.Content)
-			if strings.ToLower(m.Content) == "ping" {
-				PostMessage(m.ChannelID, "Pong!")
-				return
-			}
+			log.Printf("info: Message received from %s: %s\n", m.Author.Username, m.Content)
 		} else {
 			GuildID = c.GuildID
 		}

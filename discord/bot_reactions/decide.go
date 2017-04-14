@@ -1,0 +1,37 @@
+package bot_reactions
+
+import (
+	"fmt"
+	"math/rand"
+	"strings"
+	"time"
+
+	"github.com/bwmarrin/discordgo"
+)
+
+type Decide struct {
+	Trigger string
+}
+
+func (d *Decide) Help() string {
+	return "Let the bot decide between two or more things for you!"
+}
+
+func (d *Decide) HelpDetail(*discordgo.Message) string {
+	return d.Help()
+}
+
+func (d *Decide) Reaction(m *discordgo.Message, a *discordgo.Member) string {
+	choices := strings.Split(m.Content[len(d.Trigger)+1:], " or ")
+	the_answer := choices[rand.Intn(len(choices))]
+	return fmt.Sprintf("The correct answer is **%s**", the_answer)
+}
+
+func init() {
+	rand.Seed(time.Now().Unix())
+
+	decide := &Decide{
+		Trigger: "decide",
+	}
+	addReaction(decide.Trigger, decide)
+}
