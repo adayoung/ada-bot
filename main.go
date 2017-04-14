@@ -88,7 +88,7 @@ func main() {
 				}
 			} else {
 				fmt.Println("ERROR: We couldn't get new deathsights.")
-				log.Printf("error: %v", err) // Not a fatal error
+				log.Printf("warning: %v", err) // Not a fatal error
 			}
 		}
 	}()

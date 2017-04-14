@@ -128,7 +128,7 @@ func _botReactions(s *discordgo.Session, m *discordgo.MessageCreate) {
 					}
 				}
 			} else {
-				log.Printf("error: %v", err) // Not a fatal error, r_player is left unmodified
+				log.Printf("warning: %v", err) // Not a fatal error, r_player is left unmodified
 			}
 		}
 
@@ -136,7 +136,7 @@ func _botReactions(s *discordgo.Session, m *discordgo.MessageCreate) {
 			PostMessage(m.ChannelID, fmt.Sprintf("```%s```", g_player))
 		} else {
 			PostMessage(m.ChannelID, fmt.Sprintf("Oops, I couldn't find %s :frowning:", r_player))
-			log.Printf("error: %v", err) // Not a fatal error
+			log.Printf("warning: %v", err) // Not a fatal error
 		}
 	}
 
