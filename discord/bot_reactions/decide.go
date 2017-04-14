@@ -7,6 +7,8 @@ import (
 	"time"
 
 	"github.com/bwmarrin/discordgo"
+
+	"github.com/adayoung/ada-bot/settings"
 )
 
 type Decide struct {
@@ -22,7 +24,7 @@ func (d *Decide) HelpDetail(*discordgo.Message) string {
 }
 
 func (d *Decide) Reaction(m *discordgo.Message, a *discordgo.Member) string {
-	choices := strings.Split(m.Content[len(d.Trigger)+1:], " or ")
+	choices := strings.Split(m.Content[len(settings.Settings.Discord.BotPrefix)+len(d.Trigger)+1:], " or ")
 	the_answer := choices[rand.Intn(len(choices))]
 	return fmt.Sprintf("The correct answer is **%s**", the_answer)
 }

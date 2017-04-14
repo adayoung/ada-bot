@@ -5,12 +5,9 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"log"
 	"math/rand"
-	"regexp"
-	"strings"
 	"time"
 
 	"github.com/adayoung/ada-bot/discord/bot_reactions"
-	"github.com/adayoung/ada-bot/ire"
 )
 
 var BotID string
@@ -21,7 +18,6 @@ func init() {
 }
 
 func InitDiscordSession(token string, q_length int, wait_ms string) error {
-	fmt.Printf("DEBUG: delete me - %s\n", bot_reactions.HelloWorld()) // DEBUG: delete me
 	// Create a new Discord session using the provided login information.
 	var err error
 	if dg, err = discordgo.New(fmt.Sprintf("Bot %s", token)); err == nil {
@@ -87,63 +83,21 @@ func _botReactions(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	var GuildID string
-	if c, err := s.State.Channel(m.ChannelID); err != nil {
-		fmt.Println("Oops, error at getting session.State.Channel,", err)
-		return // Not a fatal error
-	} else {
-		if c.GuildID == "" {
-			log.Printf("info: Message received from %s: %s\n", m.Author.Username, m.Content)
-		} else {
-			GuildID = c.GuildID
+	if channel, err := s.State.Channel(m.ChannelID); err == nil {
+		guildID := channel.GuildID
+
+		if guildID == "" { // log direct messages sent to the bot
+			fmt.Printf("Message received from %s: %s\n", m.Author.Username, m.Content)
 		}
-	}
 
-	if strings.ToLower(m.Content) == "!ping" {
-		PostMessage(m.ChannelID, "Pong!")
-	}
-
-	if strings.ToLower(m.Content) == "!pink" {
-		PostMessage(m.ChannelID, "I love pink!")
-	}
-
-	if strings.HasPrefix(strings.ToLower(m.Content), "!decide") {
-		choices := strings.Split(m.Content[8:], " or ")
-		the_answer := choices[rand.Intn(len(choices))]
-		PostMessage(m.ChannelID, fmt.Sprintf("The correct answer is **%s**", the_answer))
-	}
-
-	if strings.HasPrefix(strings.ToLower(m.Content), "!whois") {
-		r_player := strings.ToLower(strings.TrimSpace(m.Content[7:]))
-		if strings.HasPrefix(r_player, "<@") { // It's a @mention and requires fetching a 'Nick'
-			filter_exp := regexp.MustCompile("[^0-9]+")          // A userID is numbers only, we shall filter!
-			r_player = filter_exp.ReplaceAllString(r_player, "") // Get rid of anything but numbers
-			if member, err := s.State.Member(GuildID, r_player); err == nil {
-				if member != nil {
-					r_player = member.Nick
-					if r_player == "" {
-						r_player = member.User.Username
-					}
-				}
-			} else {
-				log.Printf("warning: %v", err) // Not a fatal error, r_player is left unmodified
+		if member, err := s.State.Member(guildID, m.Author.ID); err == nil {
+			for _, reaction := range bot_reactions.GetReactions(m.Message, member) {
+				PostMessage(m.ChannelID, reaction)
 			}
-		}
-
-		if g_player, err := ire.GetPlayer(r_player); err == nil {
-			PostMessage(m.ChannelID, fmt.Sprintf("```%s```", g_player))
 		} else {
-			PostMessage(m.ChannelID, fmt.Sprintf("Oops, I couldn't find %s :frowning:", r_player))
-			log.Printf("warning: %v", err) // Not a fatal error
+			log.Printf("warning: %v", err) // Non-fatal error at s.State.Member() call
 		}
-	}
-
-	if strings.ToLower(m.Content) == "!help" {
-		help_text := `
-I have the following commands available:
-!ping                  - Pong!
-!whois <name>          - Lookup <name> in game and report findings.
-!decide thing or thang - Let the bot decide between two or more things for you!`
-		PostMessage(m.ChannelID, fmt.Sprintf("```%s```", help_text))
+	} else {
+		log.Printf("warning: %v", err) // Non-fatal error at s.State.Channel() call
 	}
 }

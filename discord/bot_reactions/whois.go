@@ -8,6 +8,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 
 	"github.com/adayoung/ada-bot/ire"
+	"github.com/adayoung/ada-bot/settings"
 )
 
 type Whois struct {
@@ -23,7 +24,7 @@ func (w *Whois) HelpDetail(m *discordgo.Message) string {
 }
 
 func (w *Whois) Reaction(m *discordgo.Message, a *discordgo.Member) string {
-	r_player := strings.ToLower(strings.TrimSpace(m.Content[len(w.Trigger)+1:]))
+	r_player := strings.ToLower(strings.TrimSpace(m.Content[len(settings.Settings.Discord.BotPrefix)+len(w.Trigger)+1:]))
 	if g_player, err := ire.GetPlayer(r_player); err == nil {
 		return fmt.Sprintf("```%s```", g_player)
 	} else {

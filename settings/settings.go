@@ -9,9 +9,10 @@ import (
 )
 
 type settings struct {
-	// Discord struct {
-	//
-	// }
+	Discord struct {
+		BotPrefix string
+	}
+
 	IRE struct {
 		DeathsightEnabled bool
 		LastID            int
@@ -40,6 +41,7 @@ func (s *settings) Load() error {
 		}
 	} else { // settings file does not exist, let's create a new one
 		/* ---------- BEGIN DEFAULT SETTINGS ----------*/
+		Settings.Discord.BotPrefix = "!"
 		Settings.IRE.DeathsightEnabled = true
 		Settings.IRE.LastID = 0
 		/* ----------- END DEFAULT SETTINGS -----------*/

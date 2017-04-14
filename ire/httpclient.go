@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 )
@@ -23,7 +24,7 @@ func getJSON(url string, v interface{}) error {
 					return err // Error at ioutil.ReadAll() call
 				}
 			} else {
-				return errors.New("API call didn't return a player / Non-200 status") // <--
+				return errors.New(fmt.Sprintf("Non-OK status for: %s", url)) // <--
 			}
 		} else {
 			return err // Error at client.Do() call

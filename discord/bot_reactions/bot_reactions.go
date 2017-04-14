@@ -1,8 +1,11 @@
 package bot_reactions
 
 import (
+	"fmt"
+	"strings"
+
+	"github.com/adayoung/ada-bot/settings"
 	"github.com/bwmarrin/discordgo"
-	// "github.com/adayoung/ada-bot/settings"
 )
 
 type BotReaction interface {
@@ -23,37 +26,51 @@ func addReaction(trigger string, reaction BotReaction) {
 	_botReactions[trigger] = append(_botReactions[trigger], reaction)
 }
 
-func GetReactions(trigger string, message *discordgo.Message, author *discordgo.Member) []string {
-	var reactions []string
-	if _, ok := _botReactions[trigger]; ok {
-		for _, reaction := range _botReactions[trigger] {
-			reactions = append(reactions, reaction.Reaction(message, author))
+func GetReactions(message *discordgo.Message, author *discordgo.Member) []string {
+	if _, ok := _botReactions["*"]; ok { // Run wildcard triggers first
+		for _, reaction := range _botReactions["*"] {
+			reaction.Reaction(message, author)
 		}
 	}
+
+	var reactions []string
+	if !strings.HasPrefix(message.Content, settings.Settings.Discord.BotPrefix) {
+		return reactions // The message is irrelevant, bail out with no reactions
+	}
+
+	if strings.TrimSpace(message.Content) == fmt.Sprintf("%shelp", settings.Settings.Discord.BotPrefix) {
+		reactions = append(reactions, GenHelp())
+		return reactions
+	}
+
+	for trigger, _reactions := range _botReactions {
+		if strings.HasPrefix(message.Content[len(settings.Settings.Discord.BotPrefix):], trigger) {
+			for _, reaction := range _reactions {
+				reactions = append(reactions, reaction.Reaction(message, author))
+			}
+		}
+	}
+
 	return reactions
 }
 
-func GenHelp() map[string][]string {
-	help := make(map[string][]string)
+func GenHelp() string { // FIXME: Use padding to correctly align the help text
+	help := "I have the following commands available:"
 	for k, v := range _botReactions {
-		help[k] = []string{}
 		for _, item := range v {
-			help[k] = append(help[k], item.Help())
+			help = fmt.Sprintf("%s\n%s%s - %s", help, settings.Settings.Discord.BotPrefix, k, item.Help())
 		}
 	}
-	return help
+	return fmt.Sprintf("```%s```", help)
 }
 
-func GetHelpDetail(trigger string, message *discordgo.Message) []string {
-	var help []string
-	if _, ok := _botReactions[trigger]; ok {
-		for _, reaction := range _botReactions[trigger] {
-			help = append(help, reaction.HelpDetail(message))
-		}
-	}
-	return help
-}
-
-func HelloWorld() string {
-	return "Hello, world!"
+func GetHelpDetail(trigger string, message *discordgo.Message) string {
+	return "" // TODO: Not implemented yet
+	// var help []string
+	// if _, ok := _botReactions[trigger]; ok {
+	// 	for _, reaction := range _botReactions[trigger] {
+	// 		help = append(help, reaction.HelpDetail(message))
+	// 	}
+	// }
+	// return help
 }
