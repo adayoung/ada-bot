@@ -16,4 +16,4 @@ Since I don't actually know how to sensibly lay out a Golang project, here are s
 
 # Bot Reactions
 
-Please see [examples](https://github.com/adayoung/ada-bot/discord/bot_reactions/) on how to implement bot reactions.
+Please see [examples](https://github.com/adayoung/ada-bot/tree/master/discord/bot_reactions) on how to implement bot reactions.
