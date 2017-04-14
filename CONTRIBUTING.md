@@ -13,3 +13,7 @@ Since I don't actually know how to sensibly lay out a Golang project, here are s
   * Make your changes, commit, and push!
   * Create a pull request and we'll merge it together!
   * Oh, that's all there is to it really. Suggestions welcome!
+
+# Bot Reactions
+
+If you're trying to add Bot reactions, please wait for #3 to be resolved. I'll post a uniform format to get the thing working without feeling like fighting an Occultist with a billion hangedman tarots.
