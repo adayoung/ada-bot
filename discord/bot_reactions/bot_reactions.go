@@ -38,13 +38,13 @@ func GetReactions(message *discordgo.Message, author *discordgo.Member) []string
 		return reactions // The message is irrelevant, bail out with no reactions
 	}
 
-	if strings.TrimSpace(message.Content) == fmt.Sprintf("%shelp", settings.Settings.Discord.BotPrefix) {
+	if strings.TrimSpace(strings.ToLower(message.Content)) == fmt.Sprintf("%shelp", settings.Settings.Discord.BotPrefix) {
 		reactions = append(reactions, GenHelp())
 		return reactions
 	}
 
 	for trigger, _reactions := range _botReactions {
-		if strings.HasPrefix(message.Content[len(settings.Settings.Discord.BotPrefix):], trigger) {
+		if strings.HasPrefix(strings.ToLower(message.Content[len(settings.Settings.Discord.BotPrefix):]), strings.ToLower(trigger)) {
 			for _, reaction := range _reactions {
 				reactions = append(reactions, reaction.Reaction(message, author))
 			}
