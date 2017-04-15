@@ -29,7 +29,7 @@ func addReaction(trigger string, reaction BotReaction) {
 func GetReactions(message *discordgo.Message, author *discordgo.Member) []string {
 	if _, ok := _botReactions["*"]; ok { // Run wildcard triggers first
 		for _, reaction := range _botReactions["*"] {
-			reaction.Reaction(message, author)
+			_ = reaction.Reaction(message, author) // Wildcard triggers should not respond
 		}
 	}
 
