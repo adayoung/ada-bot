@@ -3,6 +3,7 @@ package bot_reactions
 import (
 	"fmt"
 	"math/rand"
+	"time"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -49,6 +50,8 @@ func (p *EightBall) Reaction(m *discordgo.Message, a *discordgo.Member) string {
 }
 
 func init() {
+	rand.Seed(time.Now().Unix())
+
 	eightball := &EightBall{
 		Trigger: "8ball",
 	}
