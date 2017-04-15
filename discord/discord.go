@@ -88,16 +88,22 @@ func _botReactions(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 		if guildID == "" { // log direct messages sent to the bot
 			fmt.Printf("Message received from %s: %s\n", m.Author.Username, m.Content)
+			_postReactions(m.Message, &discordgo.Member{})
+			return
 		}
 
 		if member, err := s.State.Member(guildID, m.Author.ID); err == nil {
-			for _, reaction := range bot_reactions.GetReactions(m.Message, member) {
-				PostMessage(m.ChannelID, reaction)
-			}
+			_postReactions(m.Message, member)
 		} else {
 			log.Printf("warning: %v", err) // Non-fatal error at s.State.Member() call
 		}
 	} else {
 		log.Printf("warning: %v", err) // Non-fatal error at s.State.Channel() call
+	}
+}
+
+func _postReactions(m *discordgo.Message, member *discordgo.Member) {
+	for _, reaction := range bot_reactions.GetReactions(m, member) {
+		PostMessage(m.ChannelID, reaction)
 	}
 }
