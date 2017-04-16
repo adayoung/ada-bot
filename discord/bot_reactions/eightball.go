@@ -9,7 +9,7 @@ import (
 )
 
 var Magic []string = []string{
-	"It is certain",
+	"By the Logos, it is certain",
 	"It is decidedly so",
 	"Without a doubt",
 	"Yes definitely",
