@@ -1,4 +1,4 @@
-// The settings package should be importable by everything under the project
+// Runtime settings, this package should be importable by everything under the project
 package settings
 
 import (

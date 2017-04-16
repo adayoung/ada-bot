@@ -10,10 +10,10 @@ Hi! This is ada-bot, a robot for Achaea's Discord channel. It's very basic at th
 
  * Create an App on [Discord API](https://discordapp.com/developers/applications/me) and add a Bot user to it.
  * Install the package with `go get github.com/adayoung/ada-bot`
- * Copy the file `env.yaml` from the src somewhere
- * Copy the Bot's Authorization token and put it in env.yaml
- * Copy your dedicated channel's ID and put it in env.yaml
- * Put your IRE game of choice's API URL in env.yaml
+ * Copy the file `config.yaml` from the src somewhere
+ * Copy the Bot's Authorization token and put it in config.yaml
+ * Copy your dedicated channel's ID and put it in config.yaml
+ * Put your IRE game of choice's API URL in config.yaml
  * Build and install with `go install github.com/adayoung/ada-bot`
  * Launch with `$GOPATH/bin/ada-bot`
  * There's a [systemd service](https://www.freedesktop.org/software/systemd/man/systemd.service.html) file included as well to let systemd manage the bot!

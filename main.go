@@ -34,15 +34,15 @@ type config struct {
 var _config config
 
 func init() {
-	if data, err := ioutil.ReadFile("env.yaml"); err == nil {
+	if data, err := ioutil.ReadFile("config.yaml"); err == nil {
 		if err := yaml.Unmarshal([]byte(data), &_config); err == nil {
 			ire.APIURL = _config.IronRealms.APIURL
 		} else {
-			fmt.Println("ERROR: Error with parsing env.yaml.")
+			log.Println("ERROR: Error with parsing config.yaml.")
 			log.Fatalf("error: %v", err)
 		}
 	} else {
-		fmt.Println("ERROR: The file 'env.yaml' could not be read.")
+		log.Println("ERROR: The file 'config.yaml' could not be read.")
 		log.Fatalf("error: %v", err)
 	}
 
