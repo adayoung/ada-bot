@@ -47,6 +47,7 @@ func (g *Gamefeed) Sync() ([]Event, error) {
 
 	if err := getJSON(url, &g.Events); err == nil {
 		for _, event := range *g.Events {
+			go logEvent(event)
 			if event.ID > g.LastID {
 				g.LastID = event.ID
 			}

@@ -5,6 +5,8 @@ Hi! This is ada-bot, a robot for Achaea's Discord channel. It's very basic at th
 
  * [gopkg.in/yaml.v2](https://gopkg.in/yaml.v2)
  * [DiscordGo](https://github.com/bwmarrin/discordgo)
+ * [sqlx](https://github.com/jmoiron/sqlx)
+ * [pq](https://github.com/lib/pq)
 
 ## How to use
 
@@ -24,3 +26,7 @@ Hi! This is ada-bot, a robot for Achaea's Discord channel. It's very basic at th
     `https://discordapp.com/api/oauth2/authorize?client_id=<BOT CLIENT ID>&scope=bot&permissions=3072`  
     You can read more about the above [here](https://discordapp.com/developers/docs/topics/oauth2#adding-bots-to-guilds)
  * The bot would need at least 'Read Messages' and 'Send Messages' permissions to be configured for it. You can configure it in its role or setup permissions via the integration by modifying the 'permission' parameter in the above URL. Here's an unofficial [Permissions Calculator](https://discordapi.com/permissions.html).
+
+## IRE Event Logging
+
+ * The bot is capable of logging events received from IRE's gamefeed, it'll require an account with a PostgreSQL server with credentials noted in config.yaml
