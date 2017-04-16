@@ -14,6 +14,7 @@ import (
 	"github.com/adayoung/ada-bot/discord"
 	"github.com/adayoung/ada-bot/ire"
 	"github.com/adayoung/ada-bot/settings"
+	"github.com/adayoung/ada-bot/utils/storage"
 )
 
 type config struct {
@@ -26,6 +27,10 @@ type config struct {
 
 	IronRealms struct {
 		APIURL string
+	}
+
+	Database struct {
+		Connection string
 	}
 
 	SettingsFile string
@@ -44,6 +49,11 @@ func init() {
 	} else {
 		log.Println("ERROR: The file 'config.yaml' could not be read.")
 		log.Fatalf("error: %v", err)
+	}
+
+	if err := storage.InitDB(_config.Database.Connection); err != nil {
+		log.Println("The database could not be initialized, DB will not unavailable.")
+		log.Printf("error: %v", err)
 	}
 
 	if err := settings.Init(_config.SettingsFile); err != nil {
