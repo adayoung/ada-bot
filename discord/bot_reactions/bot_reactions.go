@@ -2,6 +2,7 @@ package bot_reactions
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/adayoung/ada-bot/settings"
@@ -54,11 +55,25 @@ func GetReactions(message *discordgo.Message, author *discordgo.Member) []string
 	return reactions
 }
 
-func GenHelp() string { // FIXME: Use padding to correctly align the help text
+func GenHelp() string {
+	_longestTrigger := 0
+	triggers := []string{}
+	for trigger, _ := range _botReactions {
+		triggers = append(triggers, trigger)
+		if len(trigger) > _longestTrigger {
+			_longestTrigger = len(trigger)
+		}
+	}
+	sort.Strings(triggers)
+
 	help := "I have the following commands available:"
-	for k, v := range _botReactions {
-		for _, item := range v {
-			help = fmt.Sprintf("%s\n%s%s - %s", help, settings.Settings.Discord.BotPrefix, k, item.Help())
+	for _, trigger := range triggers {
+		for _, item := range _botReactions[trigger] {
+			help = fmt.Sprintf(
+				"%s\n%s%s - %s", help, settings.Settings.Discord.BotPrefix,
+				fmt.Sprintf("%s%s", trigger, strings.Repeat(" ", _longestTrigger-len(trigger))),
+				item.Help(),
+			)
 		}
 	}
 	return fmt.Sprintf("```%s```", help)
