@@ -6,16 +6,13 @@ import (
 )
 
 var DB *sqlx.DB
-var DBAvailable int = 0
 
 func InitDB(conn_string string) error {
 	var err error
 	if DB, err = sqlx.Open("postgres", conn_string); err == nil {
 		if err := DB.Ping(); err == nil {
-			DBAvailable = 1
 			_onReady() // launch functions dependant on DBs readiness
 		} else {
-			DBAvailable = -1
 			return err // Error at DB.Ping() call
 		}
 	} else {
