@@ -59,9 +59,11 @@ func GenHelp() string {
 	_longestTrigger := 0
 	triggers := []string{}
 	for trigger, _ := range _botReactions {
-		triggers = append(triggers, trigger)
-		if len(trigger) > _longestTrigger {
-			_longestTrigger = len(trigger)
+		if trigger != "*" {
+			triggers = append(triggers, trigger)
+			if len(trigger) > _longestTrigger {
+				_longestTrigger = len(trigger)
+			}
 		}
 	}
 	sort.Strings(triggers)
