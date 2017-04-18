@@ -21,7 +21,7 @@ func (l *Logger) HelpDetail(m *discordgo.Message) string {
 }
 
 func (l *Logger) Reaction(m *discordgo.Message, a *discordgo.Member) string {
-	saveMessage(*m, *a)
+	saveMessage(m, a)
 	return ""
 }
 
@@ -56,16 +56,22 @@ func initDB() {
 	}
 }
 
-func saveMessage(m discordgo.Message, member discordgo.Member) {
+func saveMessage(m *discordgo.Message, member *discordgo.Member) {
 	if !initDBComplete {
 		return // We're not ready to save events
 	}
 
 	var _member string
-	if member.Nick != "" {
-		_member = member.Nick
+	var _guildID string
+	if member.GuildID != "" {
+		_guildID = member.GuildID
+		if member.Nick != "" {
+			_member = member.Nick
+		} else {
+			_member = member.User.Username
+		}
 	} else {
-		_member = member.User.Username
+		_member = m.Author.Username
 	}
 
 	if timestamp, err := m.Timestamp.Parse(); err == nil {
@@ -74,7 +80,7 @@ func saveMessage(m discordgo.Message, member discordgo.Member) {
 			) VALUES (?, ?, ?, ?, ?, ?, ?)
 		`
 		message = storage.DB.Rebind(message)
-		if _, err := storage.DB.Exec(message, m.ID, m.ChannelID, member.GuildID,
+		if _, err := storage.DB.Exec(message, m.ID, m.ChannelID, _guildID,
 			m.Content, timestamp, m.Author.ID, _member); err != nil {
 			log.Printf("error: %v", err) // We won't store messages, that's what!
 		}
