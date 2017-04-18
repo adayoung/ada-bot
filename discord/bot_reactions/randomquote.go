@@ -93,6 +93,9 @@ func randomQuote(guildID string, user *string, member *string) string {
 
 	if user != nil {
 		return fmt.Sprintf("No quotes retrieved for <@%s>", *user)
+	} else if member != nil {
+		return fmt.Sprintf("No quotes retrieved for %s", *member)
 	}
-	return fmt.Sprintf("No quotes retrieved for %s", *member)
+	
+	return ""
 }
