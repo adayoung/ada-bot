@@ -28,11 +28,14 @@ var user_regexp *regexp.Regexp = regexp.MustCompile("<@!?([0-9]+)>")
 
 func (r *RandomQ) Reaction(m *discordgo.Message, a *discordgo.Member) string {
 	if m.Content == fmt.Sprintf("%s%s", settings.Settings.Discord.BotPrefix, r.Trigger) {
-		return randomQuote(m.ChannelID, nil)
+		return randomQuote(a.GuildID, nil, nil)
 	} else {
-		user_id := user_regexp.FindStringSubmatch(m.Content[len(settings.Settings.Discord.BotPrefix)+len(r.Trigger)+1:])
+		request := m.Content[len(settings.Settings.Discord.BotPrefix)+len(r.Trigger)+1:]
+		user_id := user_regexp.FindStringSubmatch(request)
 		if user_id != nil {
-			return randomQuote(m.ChannelID, &user_id[1])
+			return randomQuote(a.GuildID, &user_id[1], nil)
+		} else {
+			return randomQuote(a.GuildID, nil, &request)
 		}
 	}
 	return ""
@@ -45,34 +48,47 @@ func init() {
 	addReaction(randomq.Trigger, randomq)
 }
 
-func randomQuote(channelID string, user *string) string {
-	query := "SELECT user_id, content, timestamp from discord_messages WHERE channel_id=?"
+func randomQuote(guildID string, user *string, member *string) string {
+	query := "SELECT member, content, channel_id, timestamp from discord_messages WHERE guild_id=?"
 	if user != nil {
 		query = fmt.Sprintf("%s AND user_id=?", query)
+	} else if member != nil {
+		query = fmt.Sprintf("%s AND member ILIKE ?", query)
 	}
+
 	query = fmt.Sprintf("%s AND content NOT LIKE '%s%%'", query, settings.Settings.Discord.BotPrefix)
 	query = fmt.Sprintf("%s ORDER BY random() LIMIT 1", query)
 	query = storage.DB.Rebind(query)
 
 	var user_id string
 	var content string
+	var channel_id string
 	var timestamp time.Time
 	var result bool = true
 
 	if user != nil {
-		if err := storage.DB.QueryRow(query, channelID, user).Scan(&user_id, &content, &timestamp); err != nil {
+		if err := storage.DB.QueryRow(query, guildID, user).Scan(&user_id, &content, &channel_id, &timestamp); err != nil {
+			result = false
+			log.Printf("error: %v", err) // Error with ... something
+		}
+	} else if member != nil {
+		if err := storage.DB.QueryRow(query, guildID, member).Scan(&user_id, &content, &channel_id, &timestamp); err != nil {
 			result = false
 			log.Printf("error: %v", err) // Error with ... something
 		}
 	} else {
-		if err := storage.DB.QueryRow(query, channelID).Scan(&user_id, &content, &timestamp); err != nil {
+		if err := storage.DB.QueryRow(query, guildID).Scan(&user_id, &content, &channel_id, &timestamp); err != nil {
 			result = false
 			log.Printf("error: %v", err) // Error with ... something
 		}
 	}
 
 	if result == true {
-		return fmt.Sprintf("%s\n\t -- <@%s> on %s", content, user_id, timestamp.Format("Monday, Jan _2, 2006"))
+		return fmt.Sprintf("%s\n\t -- %s on <#%s> at %s", content, user_id, channel_id, timestamp.Format("Monday, Jan _2, 2006"))
 	}
-	return fmt.Sprintf("No quotes retrieved for <@%s>", *user)
+
+	if user != nil {
+		return fmt.Sprintf("No quotes retrieved for <@%s>", *user)
+	}
+	return fmt.Sprintf("No quotes retrieved for %s", *member)
 }
