@@ -52,7 +52,7 @@ func InitDiscordSession(token string, q_length int, wait_ms string) error {
 func PostMessage(c string, m string) {
 	if len(m) > 0 {
 		mq := message{ChannelID: c, Message: m}
-		messageQueue <- mq		
+		messageQueue <- mq
 	}
 }
 
