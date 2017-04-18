@@ -50,8 +50,10 @@ func InitDiscordSession(token string, q_length int, wait_ms string) error {
 }
 
 func PostMessage(c string, m string) {
-	mq := message{ChannelID: c, Message: m}
-	messageQueue <- mq
+	if len(m) > 0 {
+		mq := message{ChannelID: c, Message: m}
+		messageQueue <- mq		
+	}
 }
 
 func CloseDiscordSession() {
