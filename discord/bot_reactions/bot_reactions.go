@@ -35,6 +35,10 @@ func GetReactions(message *discordgo.Message, author *discordgo.Member) []string
 	}
 
 	var reactions []string
+	if strings.HasPrefix(message.Content, fmt.Sprintf("%s*", settings.Settings.Discord.BotPrefix)) {
+		return reactions // Attempted wildcard trigger! Abort abort!
+	}
+
 	if !strings.HasPrefix(message.Content, settings.Settings.Discord.BotPrefix) {
 		return reactions // The message is irrelevant, bail out with no reactions
 	}
