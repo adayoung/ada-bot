@@ -14,14 +14,14 @@ var initDBComplete bool = false
 
 func initDB() {
 	sql_table := `
-    CREATE TABLE IF NOT EXISTS "ire_gamefeed" (
-      "id" integer NOT NULL PRIMARY KEY,
-      "caption" varchar(256) NOT NULL,
-      "description" varchar(256) NOT NULL,
-      "type" varchar(5) NOT NULL,
-      "date" timestamp NOT NULL
-    );
-  `
+		CREATE TABLE IF NOT EXISTS "ire_gamefeed" (
+			"id" integer NOT NULL PRIMARY KEY,
+			"caption" varchar(256) NOT NULL,
+			"description" varchar(256) NOT NULL,
+			"type" varchar(5) NOT NULL,
+			"date" timestamp NOT NULL
+		);
+	`
 	if _, err := storage.DB.Exec(sql_table); err == nil {
 		initDBComplete = true
 	} else {
@@ -35,9 +35,9 @@ func logEvent(e Event) {
 	}
 
 	event_log := `INSERT INTO ire_gamefeed (
-    id, caption, description, type, date
-    ) VALUES (?, ?, ?, ?, ?)
-  `
+		id, caption, description, type, date
+		) VALUES (?, ?, ?, ?, ?)
+	`
 	event_log = storage.DB.Rebind(event_log)
 	if _, err := storage.DB.Exec(event_log, e.ID, e.Caption,
 		e.Description, e.Type, e.Date); err != nil {

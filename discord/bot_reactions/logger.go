@@ -21,7 +21,7 @@ func (l *Logger) HelpDetail(m *discordgo.Message) string {
 }
 
 func (l *Logger) Reaction(m *discordgo.Message, a *discordgo.Member) string {
-	saveMessage(*m)
+	saveMessage(*m, *a)
 	return ""
 }
 
@@ -38,15 +38,17 @@ var initDBComplete bool = false
 
 func initDB() {
 	sql_table := `
-    CREATE TABLE IF NOT EXISTS "discord_messages" (
-      "id" serial NOT NULL PRIMARY KEY,
-      "message_id" varchar(24) NOT NULL UNIQUE,
-      "channel_id" varchar(24) NOT NULL,
-      "content" varchar(2000) NOT NULL,
-      "timestamp" timestamp NOT NULL,
-      "user_id" varchar(24) NOT NULL
-    );
-  `
+		CREATE TABLE IF NOT EXISTS "discord_messages" (
+			"id" serial NOT NULL PRIMARY KEY,
+			"message_id" varchar(24) NOT NULL UNIQUE,
+			"channel_id" varchar(24) NOT NULL,
+			"guild_id" varchar(24) NOT NULL,
+			"content" varchar(2000) NOT NULL,
+			"timestamp" timestamp NOT NULL,
+			"user_id" varchar(24) NOT NULL,
+			"member" varchar(32) NOT NULL
+		);
+	`
 	if _, err := storage.DB.Exec(sql_table); err == nil {
 		initDBComplete = true
 	} else {
@@ -54,18 +56,26 @@ func initDB() {
 	}
 }
 
-func saveMessage(m discordgo.Message) {
+func saveMessage(m discordgo.Message, member discordgo.Member) {
 	if !initDBComplete {
 		return // We're not ready to save events
 	}
+
+	var _member string
+	if member.Nick != "" {
+		_member = member.Nick
+	} else {
+		_member = member.User.Username
+	}
+
 	if timestamp, err := m.Timestamp.Parse(); err == nil {
 		message := `INSERT INTO discord_messages (
-      message_id, channel_id, content, timestamp, user_id
-      ) VALUES (?, ?, ?, ?, ?)
-      `
+			message_id, channel_id, guild_id, content, timestamp, user_id, member
+			) VALUES (?, ?, ?, ?, ?, ?, ?)
+		`
 		message = storage.DB.Rebind(message)
-		if _, err := storage.DB.Exec(message, m.ID, m.ChannelID,
-			m.Content, timestamp, m.Author.ID); err != nil {
+		if _, err := storage.DB.Exec(message, m.ID, m.ChannelID, member.GuildID,
+			m.Content, timestamp, m.Author.ID, _member); err != nil {
 			log.Printf("error: %v", err) // We won't store messages, that's what!
 		}
 	} else {
