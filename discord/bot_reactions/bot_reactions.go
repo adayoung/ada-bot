@@ -5,8 +5,9 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/adayoung/ada-bot/settings"
 	"github.com/bwmarrin/discordgo"
+
+	"github.com/adayoung/ada-bot/settings"
 )
 
 type BotReaction interface {
@@ -28,13 +29,17 @@ func addReaction(trigger string, reaction BotReaction) {
 }
 
 func GetReactions(message *discordgo.Message, author *discordgo.Member) []string {
+	var reactions []string
 	if _, ok := _botReactions["*"]; ok { // Run wildcard triggers first
 		for _, reaction := range _botReactions["*"] {
-			_ = reaction.Reaction(message, author) // Wildcard triggers should not respond
+			if author.GuildID == "" {
+				reactions = append(reactions, reaction.Reaction(message, author))
+			} else {
+				_ = reaction.Reaction(message, author) // Wildcard triggers should not respond on channels
+			}
 		}
 	}
 
-	var reactions []string
 	if strings.HasPrefix(message.Content, fmt.Sprintf("%s*", settings.Settings.Discord.BotPrefix)) {
 		return reactions // Attempted wildcard trigger! Abort abort!
 	}
