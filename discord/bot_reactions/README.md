@@ -1,6 +1,6 @@
 # Bot Reactions
 
-Hi! It's easy to implement simple bot reactions! We have a lovely dispatcher to take care of the gory details as long as your code confirms to the following example:
+Hi! It's easy to implement simple bot reactions! We have a lovely dispatcher to take care of the gory details as long as your code conforms to the following example:
 
 ```Go
 package bot_reactions
