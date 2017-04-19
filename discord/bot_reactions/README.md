@@ -45,6 +45,6 @@ func init() {
 }
 ```
 
-Oh, there's a special wildcard trigger `*` for which reactions are ignored. Those are intended for things that like to log and process all incoming messages (e.g. - logger.go).
+Oh, there's a special wildcard trigger `*` for which reactions are ignored on channels (they still work on direct messages). Those are intended for things that like to log and process all incoming messages (e.g. - logger.go).
 
 Have a look at the other reactions for more complex examples!
