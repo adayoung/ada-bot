@@ -39,10 +39,12 @@ func (p *Ping) Reaction(m *discordgo.Message, a *discordgo.Member) string {
 // Here's where you add your 'trigger' and register your reaction with the dispatcher
 func init() {
 	ping := &Ping{
-		Trigger: "ping",
+		Trigger: "ping", // Yes, it's "ping" and NOT "!ping".
 	}
 	addReaction(ping.Trigger, ping)
 }
 ```
+
+Oh, there's a special wildcard trigger `*` for which reactions are ignored. Those are intended for things that like to log and process all incoming messages (e.g. - logger.go).
 
 Have a look at the other reactions for more complex examples!
