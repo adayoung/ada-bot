@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/adayoung/ada-bot.svg?branch=master)](https://travis-ci.org/adayoung/ada-bot)
+
 # ada-bot
 Hi! This is ada-bot, a robot for Achaea's Discord channel. It's very basic at the moment and usually sticks around to look cute and call out deathsightings over a dedicated channel.
 
