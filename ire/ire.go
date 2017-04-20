@@ -95,6 +95,9 @@ Rank (Explorer): %s`,
 }
 
 func GetPlayer(player string) (*Player, error) {
+	if !(len(player) > 0) {
+		return nil, errors.New(fmt.Sprintf("Invalid player name supplied: %s", player))
+	}
 	if match, err := regexp.MatchString("(?i)[^a-z]+", player); err == nil {
 		if !match {
 			url := fmt.Sprintf("%s/characters/%s.json", APIURL, player)

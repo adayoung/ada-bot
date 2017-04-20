@@ -34,7 +34,7 @@ func (r *RandomQ) Reaction(m *discordgo.Message, a *discordgo.Member) string {
 	if m.Content == fmt.Sprintf("%s%s", settings.Settings.Discord.BotPrefix, r.Trigger) {
 		return randomQuote(a.GuildID, nil, nil)
 	} else {
-		request := m.Content[len(settings.Settings.Discord.BotPrefix)+len(r.Trigger)+1:]
+		request := m.Content[len(settings.Settings.Discord.BotPrefix)+len(r.Trigger):]
 		user_id := user_regexp.FindStringSubmatch(request)
 		if user_id != nil {
 			return randomQuote(a.GuildID, &user_id[1], nil)
@@ -96,6 +96,6 @@ func randomQuote(guildID string, user *string, member *string) string {
 	} else if member != nil {
 		return fmt.Sprintf("No quotes retrieved for %s", *member)
 	}
-	
+
 	return ""
 }
