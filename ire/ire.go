@@ -107,12 +107,10 @@ func GetPlayer(player string) (*Player, error) {
 			} else {
 				return nil, err // Error at getJson() call
 			}
-			return _player, nil
 		} else {
 			return nil, errors.New(fmt.Sprintf("Invalid player name supplied: %s", player))
 		}
 	} else {
 		return nil, err // Error at regexp.MatchString() call
 	}
-	return nil, nil
 }

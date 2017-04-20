@@ -43,7 +43,6 @@ func (r *RandomQ) Reaction(m *discordgo.Message, a *discordgo.Member) string {
 			return randomQuote(a.GuildID, nil, &request)
 		}
 	}
-	return ""
 }
 
 func init() {

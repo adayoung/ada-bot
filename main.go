@@ -91,7 +91,7 @@ func main() {
 	discord.PostMessage(_config.Discord.Channel, "```---------- ada-bot restarting ... ----------```")
 	ticker := time.NewTicker(time.Millisecond * 30000) // 30 second ticker
 	go func() {
-		for _ = range ticker.C {
+		for range ticker.C {
 			if deathsights, err := IRE.Sync(); err == nil {
 				for _, event := range deathsights {
 					discord.PostMessage(_config.Discord.Channel, fmt.Sprintf("```%s - %s```", event.Date, event.Description))

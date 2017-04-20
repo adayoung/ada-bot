@@ -67,7 +67,7 @@ func GetReactions(message *discordgo.Message, author *discordgo.Member) []string
 func GenHelp() string {
 	_longestTrigger := 0
 	triggers := []string{}
-	for trigger, _ := range _botReactions {
+	for trigger := range _botReactions {
 		if trigger != "*" {
 			triggers = append(triggers, trigger)
 			if len(trigger) > _longestTrigger {
