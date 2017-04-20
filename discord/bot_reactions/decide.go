@@ -25,8 +25,8 @@ func (d *Decide) HelpDetail(*discordgo.Message) string {
 
 func (d *Decide) Reaction(m *discordgo.Message, a *discordgo.Member) string {
 	choices := strings.Split(m.Content[len(settings.Settings.Discord.BotPrefix)+len(d.Trigger):], " or ")
-	the_answer := choices[rand.Intn(len(choices))]
-	return fmt.Sprintf("The correct answer is **%s**", strings.TrimSpace(the_answer))
+	theAnswer := choices[rand.Intn(len(choices))]
+	return fmt.Sprintf("The correct answer is **%s**", strings.TrimSpace(theAnswer))
 }
 
 func init() {

@@ -37,7 +37,7 @@ func init() {
 var initDBComplete bool = false
 
 func initDB() {
-	sql_table := `
+	sqlTable := `
 		CREATE TABLE IF NOT EXISTS "discord_messages" (
 			"id" serial NOT NULL PRIMARY KEY,
 			"message_id" varchar(24) NOT NULL UNIQUE,
@@ -49,7 +49,7 @@ func initDB() {
 			"member" varchar(32) NOT NULL
 		);
 	`
-	if _, err := storage.DB.Exec(sql_table); err == nil {
+	if _, err := storage.DB.Exec(sqlTable); err == nil {
 		initDBComplete = true
 	} else {
 		log.Printf("error: %v", err) // We won't store messages, that's what!

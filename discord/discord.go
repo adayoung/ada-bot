@@ -10,15 +10,15 @@ import (
 	"github.com/adayoung/ada-bot/discord/bot_reactions"
 )
 
-var BotID string
+var BotID string // Set by InitDiscordSession
 var dg *discordgo.Session
 
 func init() {
 	rand.Seed(time.Now().Unix())
 }
 
-func InitDiscordSession(token string, q_length int, wait_ms string) error {
-	// Create a new Discord session using the provided login information.
+// Create a new Discord session using the provided login information.
+func InitDiscordSession(token string, qLength int, waitMs string) error {
 	var err error
 	if dg, err = discordgo.New(fmt.Sprintf("Bot %s", token)); err == nil {
 		if u, err := dg.User("@me"); err == nil {
@@ -39,9 +39,9 @@ func InitDiscordSession(token string, q_length int, wait_ms string) error {
 		return err // Error at creating a new Discord session
 	}
 
-	if _wait_ms, err := time.ParseDuration(wait_ms); err == nil {
-		messageQueue = make(chan message, q_length)
-		rateLimit = time.NewTicker(_wait_ms)
+	if _waitMs, err := time.ParseDuration(waitMs); err == nil {
+		messageQueue = make(chan message, qLength)
+		rateLimit = time.NewTicker(_waitMs)
 		go dispatchMessages()
 	} else {
 		return err
@@ -49,6 +49,7 @@ func InitDiscordSession(token string, q_length int, wait_ms string) error {
 	return nil
 }
 
+// Queue a message for posting via Discord API, takes channelID and message
 func PostMessage(c string, m string) {
 	if len(m) > 0 {
 		mq := message{ChannelID: c, Message: m}
@@ -56,6 +57,7 @@ func PostMessage(c string, m string) {
 	}
 }
 
+// Close Discord Gateway websocket on exit
 func CloseDiscordSession() {
 	dg.Close()
 }

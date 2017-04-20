@@ -23,7 +23,7 @@ func (e *Eliza) HelpDetail(m *discordgo.Message) string {
 	return e.Help()
 }
 
-var request_regexp *regexp.Regexp = regexp.MustCompile("(?i)[^a-z ]+")
+var requestRegexp *regexp.Regexp = regexp.MustCompile("(?i)[^a-z ]+")
 
 func (e *Eliza) Reaction(m *discordgo.Message, a *discordgo.Member) string {
 	if strings.HasPrefix(m.Content, settings.Settings.Discord.BotPrefix) {
@@ -34,7 +34,7 @@ func (e *Eliza) Reaction(m *discordgo.Message, a *discordgo.Member) string {
 		return "" // Let's not talk on a channel unless it's a DM
 	}
 
-	request := request_regexp.ReplaceAllString(m.Content, "")
+	request := requestRegexp.ReplaceAllString(m.Content, "")
 	response, err := eliza.AnalyseString(request)
 	if err != nil {
 		log.Printf("error: %v", err) // Error with eliza.AnalyseString() call

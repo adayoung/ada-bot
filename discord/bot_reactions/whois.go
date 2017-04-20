@@ -24,13 +24,13 @@ func (w *Whois) HelpDetail(m *discordgo.Message) string {
 }
 
 func (w *Whois) Reaction(m *discordgo.Message, a *discordgo.Member) string {
-	r_player := strings.ToLower(strings.TrimSpace(m.Content[len(settings.Settings.Discord.BotPrefix)+len(w.Trigger):]))
-	if g_player, err := ire.GetPlayer(r_player); err == nil {
-		return fmt.Sprintf("```%s```", g_player)
+	rPlayer := strings.ToLower(strings.TrimSpace(m.Content[len(settings.Settings.Discord.BotPrefix)+len(w.Trigger):]))
+	if gPlayer, err := ire.GetPlayer(rPlayer); err == nil {
+		return fmt.Sprintf("```%s```", gPlayer)
 	} else {
 		log.Printf("error: %v", err) // Not a fatal error
 	}
-	return fmt.Sprintf("Oops, I couldn't find %s :frowning:", r_player)
+	return fmt.Sprintf("Oops, I couldn't find %s :frowning:", rPlayer)
 }
 
 func init() {

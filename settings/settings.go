@@ -1,4 +1,4 @@
-// Runtime settings, this package should be importable by everything under the project
+// Package settings: this should be importable by everything under the project
 package settings
 
 import (
@@ -20,8 +20,9 @@ type settings struct {
 }
 
 var settingsPath string
-var Settings settings
+var Settings settings // runtime settings
 
+// Called by main() once config.yaml is read/processed
 func Init(path string) error {
 	settingsPath = path
 	if err := Settings.Load(); err != nil {
@@ -53,8 +54,8 @@ func (s *settings) Load() error {
 }
 
 func (s *settings) Save() error {
-	if y_settings, err := yaml.Marshal(Settings); err == nil {
-		if err := ioutil.WriteFile(settingsPath, y_settings, 0600); err != nil {
+	if ySettings, err := yaml.Marshal(Settings); err == nil {
+		if err := ioutil.WriteFile(settingsPath, ySettings, 0600); err != nil {
 			return err // Error at WriteFile() call
 		}
 	} else {

@@ -1,7 +1,6 @@
 package ire
 
 import (
-	"errors"
 	"fmt"
 	"regexp"
 	"sort"
@@ -10,8 +9,9 @@ import (
 	"github.com/adayoung/ada-bot/settings"
 )
 
-var APIURL string
+var APIURL string // This is read and set from config.yaml by main.init()
 
+// Represents a single event per IRE's gamefeed
 type Event struct {
 	ID          int    `json:"id"`
 	Caption     string `json:"caption"`
@@ -20,18 +20,20 @@ type Event struct {
 	Date        string `json:"date"`
 }
 
+// Gamefeed is a collection of Events, ahead of LastID
 type Gamefeed struct {
 	LastID int
 	Events *[]Event
 }
 
-type EventsByDate []Event            // Implements sort.Interface
-func (d EventsByDate) Len() int      { return len(d) }
-func (d EventsByDate) Swap(i, j int) { d[i], d[j] = d[j], d[i] }
-func (d EventsByDate) Less(i, j int) bool {
+type eventsByDate []Event            // Implements sort.Interface
+func (d eventsByDate) Len() int      { return len(d) }
+func (d eventsByDate) Swap(i, j int) { d[i], d[j] = d[j], d[i] }
+func (d eventsByDate) Less(i, j int) bool {
 	return d[i].Date < d[j].Date
 }
 
+// Get the latest events from API endpoint, returns deathsights
 func (g *Gamefeed) Sync() ([]Event, error) {
 	url := fmt.Sprintf("%s/gamefeed.json", APIURL)
 	g.LastID = settings.Settings.IRE.LastID
@@ -61,10 +63,11 @@ func (g *Gamefeed) Sync() ([]Event, error) {
 	}
 
 	settings.Settings.IRE.LastID = g.LastID
-	sort.Sort(EventsByDate(deathsights))
+	sort.Sort(eventsByDate(deathsights))
 	return deathsights, nil
 }
 
+// Represents a player per IRE's API
 type Player struct {
 	Name         string `json:"name"`
 	Fullname     string `json:"fullname"`
@@ -94,9 +97,10 @@ Rank (Explorer): %s`,
 	return player
 }
 
+// Lookup and retrieve a player from IRE's API
 func GetPlayer(player string) (*Player, error) {
 	if !(len(player) > 0) {
-		return nil, errors.New(fmt.Sprintf("Invalid player name supplied: %s", player))
+		return nil, fmt.Errorf(fmt.Sprintf("Invalid player name supplied: %s", player))
 	}
 	if match, err := regexp.MatchString("(?i)[^a-z]+", player); err == nil {
 		if !match {
@@ -108,7 +112,7 @@ func GetPlayer(player string) (*Player, error) {
 				return nil, err // Error at getJson() call
 			}
 		} else {
-			return nil, errors.New(fmt.Sprintf("Invalid player name supplied: %s", player))
+			return nil, fmt.Errorf(fmt.Sprintf("Invalid player name supplied: %s", player))
 		}
 	} else {
 		return nil, err // Error at regexp.MatchString() call

@@ -25,7 +25,7 @@ func (r *RandomQ) HelpDetail(m *discordgo.Message) string {
 	return r.Help()
 }
 
-var user_regexp *regexp.Regexp = regexp.MustCompile("<@!?([0-9]+)>")
+var userRegexp *regexp.Regexp = regexp.MustCompile("<@!?([0-9]+)>")
 
 func (r *RandomQ) Reaction(m *discordgo.Message, a *discordgo.Member) string {
 	if a.GuildID == "" {
@@ -36,9 +36,9 @@ func (r *RandomQ) Reaction(m *discordgo.Message, a *discordgo.Member) string {
 		return randomQuote(a.GuildID, nil, nil)
 	} else {
 		request := strings.TrimSpace(m.Content[len(settings.Settings.Discord.BotPrefix)+len(r.Trigger):])
-		user_id := user_regexp.FindStringSubmatch(request)
-		if user_id != nil {
-			return randomQuote(a.GuildID, &user_id[1], nil)
+		userID := userRegexp.FindStringSubmatch(request)
+		if userID != nil {
+			return randomQuote(a.GuildID, &userID[1], nil)
 		} else {
 			return randomQuote(a.GuildID, nil, &request)
 		}
@@ -64,31 +64,31 @@ func randomQuote(guildID string, user *string, member *string) string {
 	query = fmt.Sprintf("%s ORDER BY random() LIMIT 1", query)
 	query = storage.DB.Rebind(query)
 
-	var user_id string
+	var userID string
 	var content string
-	var channel_id string
+	var channelID string
 	var timestamp time.Time
 	var result bool = true
 
 	if user != nil {
-		if err := storage.DB.QueryRow(query, guildID, user).Scan(&user_id, &content, &channel_id, &timestamp); err != nil {
+		if err := storage.DB.QueryRow(query, guildID, user).Scan(&userID, &content, &channelID, &timestamp); err != nil {
 			result = false
 			log.Printf("error: %v", err) // Error with ... something
 		}
 	} else if member != nil {
-		if err := storage.DB.QueryRow(query, guildID, member).Scan(&user_id, &content, &channel_id, &timestamp); err != nil {
+		if err := storage.DB.QueryRow(query, guildID, member).Scan(&userID, &content, &channelID, &timestamp); err != nil {
 			result = false
 			log.Printf("error: %v", err) // Error with ... something
 		}
 	} else {
-		if err := storage.DB.QueryRow(query, guildID).Scan(&user_id, &content, &channel_id, &timestamp); err != nil {
+		if err := storage.DB.QueryRow(query, guildID).Scan(&userID, &content, &channelID, &timestamp); err != nil {
 			result = false
 			log.Printf("error: %v", err) // Error with ... something
 		}
 	}
 
 	if result == true && len(content) > 0 {
-		return fmt.Sprintf("%s\n\t -- %s on <#%s> at %s", content, user_id, channel_id, timestamp.Format("Monday, Jan _2, 2006"))
+		return fmt.Sprintf("%s\n\t -- %s on <#%s> at %s", content, userID, channelID, timestamp.Format("Monday, Jan _2, 2006"))
 	}
 
 	if user != nil {

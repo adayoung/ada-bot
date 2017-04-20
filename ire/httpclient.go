@@ -3,7 +3,6 @@ package ire
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -24,7 +23,7 @@ func getJSON(url string, v interface{}) error {
 					return err // Error at ioutil.ReadAll() call
 				}
 			} else {
-				return errors.New(fmt.Sprintf("Non-OK status for: %s", url)) // <--
+				return fmt.Errorf(fmt.Sprintf("Non-OK status for: %s", url)) // <--
 			}
 		} else {
 			return err // Error at client.Do() call
