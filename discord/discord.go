@@ -74,6 +74,9 @@ func ready(s *discordgo.Session, r *discordgo.Ready) {
 		}
 		fmt.Println("----------------------------------")
 	}
+	if err := s.UpdateStatus(0, "play.achaea.com"); err != nil {
+		log.Printf("warning: %v", err) // Not a fatal error
+	}
 }
 
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
