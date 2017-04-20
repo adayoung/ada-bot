@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
@@ -34,7 +35,7 @@ func (r *RandomQ) Reaction(m *discordgo.Message, a *discordgo.Member) string {
 	if m.Content == fmt.Sprintf("%s%s", settings.Settings.Discord.BotPrefix, r.Trigger) {
 		return randomQuote(a.GuildID, nil, nil)
 	} else {
-		request := m.Content[len(settings.Settings.Discord.BotPrefix)+len(r.Trigger):]
+		request := strings.TrimSpace(m.Content[len(settings.Settings.Discord.BotPrefix)+len(r.Trigger):])
 		user_id := user_regexp.FindStringSubmatch(request)
 		if user_id != nil {
 			return randomQuote(a.GuildID, &user_id[1], nil)
