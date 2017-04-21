@@ -32,7 +32,7 @@ func (p *Ping) HelpDetail(m *discordgo.Message) string {
 
 // The actual reaction, the full message content is available in m.Content
 // The returned string is sent to the channel where the trigger was seen
-func (p *Ping) Reaction(m *discordgo.Message, a *discordgo.Member) string {
+func (p *Ping) Reaction(m *discordgo.Message, a *discordgo.Member, update bool) string {
 	return "Pong!"
 }
 
