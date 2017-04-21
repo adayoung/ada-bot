@@ -26,7 +26,7 @@ func (d *dice) HelpDetail(m *discordgo.Message) string {
 	return d.Help()
 }
 
-var diceRegexp = regexp.MustCompile(`([0-9]+)d([0-9]+)(?:\+([0-9]+))?`)
+var diceRegexp = regexp.MustCompile(`(?i)([0-9]+)d([0-9]+)(?:\+([0-9]+))?`)
 
 func (d *dice) Reaction(m *discordgo.Message, a *discordgo.Member) string {
 	request := strings.TrimSpace(m.Content[len(settings.Settings.Discord.BotPrefix)+len(d.Trigger):])
