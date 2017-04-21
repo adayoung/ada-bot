@@ -23,7 +23,7 @@ func (e *Eliza) HelpDetail(m *discordgo.Message) string {
 	return e.Help()
 }
 
-var requestRegexp *regexp.Regexp = regexp.MustCompile("(?i)[^a-z ]+")
+var requestRegexp *regexp.Regexp = regexp.MustCompile("(?i)[^a-z!',. ]+")
 
 func (e *Eliza) Reaction(m *discordgo.Message, a *discordgo.Member) string {
 	if strings.HasPrefix(m.Content, settings.Settings.Discord.BotPrefix) {
