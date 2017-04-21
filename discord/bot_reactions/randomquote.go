@@ -61,6 +61,7 @@ func randomQuote(guildID string, user *string, member *string) string {
 	}
 
 	query = fmt.Sprintf("%s AND content NOT LIKE '%s%%'", query, settings.Settings.Discord.BotPrefix)
+	query = fmt.Sprintf("%s AND character_length(content) > 6", query)
 	query = fmt.Sprintf("%s ORDER BY random() LIMIT 1", query)
 	query = storage.DB.Rebind(query)
 
