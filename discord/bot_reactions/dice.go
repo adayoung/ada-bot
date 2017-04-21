@@ -28,7 +28,7 @@ func (d *dice) HelpDetail(m *discordgo.Message) string {
 
 var diceRegexp = regexp.MustCompile(`(?i)([0-9]+)d([0-9]+)(?:\+([0-9]+))?`)
 
-func (d *dice) Reaction(m *discordgo.Message, a *discordgo.Member) string {
+func (d *dice) Reaction(m *discordgo.Message, a *discordgo.Member, u bool) string {
 	request := strings.TrimSpace(m.Content[len(settings.Settings.Discord.BotPrefix)+len(d.Trigger):])
 	if !(len(request) > 0) {
 		request = "6d6"

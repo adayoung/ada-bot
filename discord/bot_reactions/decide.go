@@ -23,7 +23,7 @@ func (d *Decide) HelpDetail(*discordgo.Message) string {
 	return d.Help()
 }
 
-func (d *Decide) Reaction(m *discordgo.Message, a *discordgo.Member) string {
+func (d *Decide) Reaction(m *discordgo.Message, a *discordgo.Member, u bool) string {
 	choices := strings.Split(m.Content[len(settings.Settings.Discord.BotPrefix)+len(d.Trigger):], " or ")
 	theAnswer := choices[rand.Intn(len(choices))]
 	return fmt.Sprintf("The correct answer is **%s**", strings.TrimSpace(theAnswer))

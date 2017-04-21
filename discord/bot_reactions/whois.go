@@ -23,7 +23,7 @@ func (w *Whois) HelpDetail(m *discordgo.Message) string {
 	return w.Help()
 }
 
-func (w *Whois) Reaction(m *discordgo.Message, a *discordgo.Member) string {
+func (w *Whois) Reaction(m *discordgo.Message, a *discordgo.Member, u bool) string {
 	rPlayer := strings.ToLower(strings.TrimSpace(m.Content[len(settings.Settings.Discord.BotPrefix)+len(w.Trigger):]))
 	if gPlayer, err := ire.GetPlayer(rPlayer); err == nil {
 		return fmt.Sprintf("```%s```", gPlayer)

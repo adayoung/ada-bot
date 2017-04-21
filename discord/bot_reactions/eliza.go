@@ -25,7 +25,7 @@ func (e *Eliza) HelpDetail(m *discordgo.Message) string {
 
 var requestRegexp *regexp.Regexp = regexp.MustCompile("(?i)[^a-z!',. ]+")
 
-func (e *Eliza) Reaction(m *discordgo.Message, a *discordgo.Member) string {
+func (e *Eliza) Reaction(m *discordgo.Message, a *discordgo.Member, u bool) string {
 	if strings.HasPrefix(m.Content, settings.Settings.Discord.BotPrefix) {
 		return "" // It's an explicit bot reaction-request, bail out
 	}

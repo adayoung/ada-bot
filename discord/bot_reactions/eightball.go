@@ -44,7 +44,7 @@ func (p *EightBall) HelpDetail(m *discordgo.Message) string {
 	return p.Help()
 }
 
-func (p *EightBall) Reaction(m *discordgo.Message, a *discordgo.Member) string {
+func (p *EightBall) Reaction(m *discordgo.Message, a *discordgo.Member, u bool) string {
 	theAnswer := Magic[rand.Intn(len(Magic))]
 	return fmt.Sprintf("```%s```", theAnswer)
 }

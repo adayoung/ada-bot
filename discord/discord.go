@@ -27,6 +27,7 @@ func InitDiscordSession(token string, qLength int, waitMs string) error {
 			dg.AddHandler(ready)
 			// Add handlers for messages received
 			dg.AddHandler(messageCreate)
+			dg.AddHandler(messageUpdateEvent)
 			if err := dg.Open(); err == nil {
 				fmt.Println("Successfully launched a new Discord session.")
 			} else {
@@ -81,11 +82,15 @@ func ready(s *discordgo.Session, r *discordgo.Ready) {
 	}
 }
 
-func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
-	go _botReactions(s, m)
+func messageUpdateEvent(s *discordgo.Session, m *discordgo.MessageUpdate) {
+	go _botReactions(s, m.Message, true)
 }
 
-func _botReactions(s *discordgo.Session, m *discordgo.MessageCreate) {
+func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
+	go _botReactions(s, m.Message, false)
+}
+
+func _botReactions(s *discordgo.Session, m *discordgo.Message, update bool) {
 	if m.Author.ID == BotID { // ignore the bot's own messages from processing
 		return
 	}
@@ -95,12 +100,12 @@ func _botReactions(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 		if guildID == "" { // log direct messages sent to the bot
 			fmt.Printf("Message received from %s: %s\n", m.Author.Username, m.Content)
-			_postReactions(m.Message, &discordgo.Member{})
+			_postReactions(m, &discordgo.Member{}, update)
 			return
 		}
 
 		if member, err := s.State.Member(guildID, m.Author.ID); err == nil {
-			_postReactions(m.Message, member)
+			_postReactions(m, member, update)
 		} else {
 			log.Printf("warning: %v", err) // Non-fatal error at s.State.Member() call
 		}
@@ -109,8 +114,8 @@ func _botReactions(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 }
 
-func _postReactions(m *discordgo.Message, member *discordgo.Member) {
-	for _, reaction := range bot_reactions.GetReactions(m, member) {
+func _postReactions(m *discordgo.Message, member *discordgo.Member, update bool) {
+	for _, reaction := range bot_reactions.GetReactions(m, member, update) {
 		PostMessage(m.ChannelID, reaction)
 	}
 }

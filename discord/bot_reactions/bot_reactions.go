@@ -13,7 +13,7 @@ import (
 type BotReaction interface {
 	Help() string
 	HelpDetail(*discordgo.Message) string
-	Reaction(message *discordgo.Message, author *discordgo.Member) string
+	Reaction(message *discordgo.Message, author *discordgo.Member, update bool) string
 }
 
 var _botReactions map[string][]BotReaction
@@ -28,14 +28,14 @@ func addReaction(trigger string, reaction BotReaction) {
 	_botReactions[trigger] = append(_botReactions[trigger], reaction)
 }
 
-func GetReactions(message *discordgo.Message, author *discordgo.Member) []string {
+func GetReactions(message *discordgo.Message, author *discordgo.Member, update bool) []string {
 	var reactions []string
 	if _, ok := _botReactions["*"]; ok { // Run wildcard triggers first
 		for _, reaction := range _botReactions["*"] {
 			if author.GuildID == "" {
-				reactions = append(reactions, reaction.Reaction(message, author))
+				reactions = append(reactions, reaction.Reaction(message, author, update))
 			} else {
-				_ = reaction.Reaction(message, author) // Wildcard triggers should not respond on channels
+				_ = reaction.Reaction(message, author, update) // Wildcard triggers should not respond on channels
 			}
 		}
 	}
@@ -56,7 +56,7 @@ func GetReactions(message *discordgo.Message, author *discordgo.Member) []string
 	for trigger, _reactions := range _botReactions {
 		if strings.HasPrefix(strings.ToLower(message.Content[len(settings.Settings.Discord.BotPrefix):]), strings.ToLower(trigger)) {
 			for _, reaction := range _reactions {
-				reactions = append(reactions, reaction.Reaction(message, author))
+				reactions = append(reactions, reaction.Reaction(message, author, update))
 			}
 		}
 	}

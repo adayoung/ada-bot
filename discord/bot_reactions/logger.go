@@ -22,9 +22,9 @@ func (l *Logger) HelpDetail(m *discordgo.Message) string {
 	return l.Help()
 }
 
-func (l *Logger) Reaction(m *discordgo.Message, a *discordgo.Member) string {
-	saveMessage(m, a)
-	return ""
+func (l *Logger) Reaction(m *discordgo.Message, a *discordgo.Member, u bool) string {
+	saveMessage(m, a, u)
+	return "" // We don't talk, we just listen -sagenod-
 }
 
 func init() {
@@ -53,13 +53,30 @@ func initDB() {
 		);
 	`
 	if _, err := storage.DB.Exec(sqlTable); err == nil {
+		// initDBComplete = true
+	} else {
+		log.Printf("error: %v", err) // We won't store messages, that's what!
+	}
+
+	sqlTable = `
+		CREATE TABLE IF NOT EXISTS "discord_messages_updates" (
+			"id" serial NOT NULL PRIMARY KEY,
+			"message_id" varchar(24) NOT NULL,
+			"content" varchar(2000) NOT NULL,
+			"timestamp" timestamp NOT NULL
+		);
+	`
+	if _, err := storage.DB.Exec(sqlTable); err == nil {
 		initDBComplete = true
 	} else {
 		log.Printf("error: %v", err) // We won't store messages, that's what!
 	}
+
+	// TODO: Add foreign key constraint to enforce:
+	// discord_messages_updates.message_id -> discord_messages.message_id
 }
 
-func saveMessage(m *discordgo.Message, member *discordgo.Member) {
+func saveMessage(m *discordgo.Message, member *discordgo.Member, u bool) {
 	if !initDBComplete {
 		return // We're not ready to save events
 	}
@@ -82,16 +99,25 @@ func saveMessage(m *discordgo.Message, member *discordgo.Member) {
 	}
 
 	if timestamp, err := m.Timestamp.Parse(); err == nil {
-		message := `INSERT INTO discord_messages (
-			message_id, channel_id, guild_id, content,
-			timestamp, user_id, member, bot_command
-			) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-		`
-		message = storage.DB.Rebind(message)
-		if _, err := storage.DB.Exec(message, m.ID, m.ChannelID, _guildID,
-			m.Content, timestamp, m.Author.ID, _member,
-			strings.HasPrefix(m.Content, settings.Settings.Discord.BotPrefix)); err != nil {
-			log.Printf("error: %v", err) // We won't store messages, that's what!
+		if !u { // New Message
+			message := `INSERT INTO discord_messages (
+				message_id, channel_id, guild_id, content,
+				timestamp, user_id, member, bot_command
+				) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+				`
+			message = storage.DB.Rebind(message)
+			if _, err := storage.DB.Exec(message, m.ID, m.ChannelID, _guildID,
+				m.Content, timestamp, m.Author.ID, _member,
+				strings.HasPrefix(m.Content, settings.Settings.Discord.BotPrefix)); err != nil {
+				log.Printf("error: %v", err) // We won't store messages, that's what!
+			}
+		} else { // Updated Message
+			message := `INSERT INTO discord_messages_updates (
+				message_id, content, timestamp) VALUES (?, ?, ?)`
+			message = storage.DB.Rebind(message)
+			if _, err := storage.DB.Exec(message, m.ID, m.Content, timestamp); err != nil {
+				log.Printf("error: %v", err) // We won't store messages, that's what!
+			}
 		}
 	} else {
 		log.Printf("error: %v", err) // Error at m.Timestamp.Parse() call
