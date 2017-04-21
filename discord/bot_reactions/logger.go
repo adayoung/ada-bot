@@ -64,6 +64,10 @@ func saveMessage(m *discordgo.Message, member *discordgo.Member) {
 		return // We're not ready to save events
 	}
 
+	if m.Author.Bot {
+		return // Do not log messages posted by other bots
+	}
+
 	var _member string
 	var _guildID string
 	if member.GuildID != "" {
