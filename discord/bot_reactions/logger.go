@@ -2,9 +2,11 @@ package bot_reactions
 
 import (
 	"log"
+	"strings"
 
 	"github.com/bwmarrin/discordgo"
 
+	"github.com/adayoung/ada-bot/settings"
 	"github.com/adayoung/ada-bot/utils/storage"
 )
 
@@ -46,7 +48,8 @@ func initDB() {
 			"content" varchar(2000) NOT NULL,
 			"timestamp" timestamp NOT NULL,
 			"user_id" varchar(24) NOT NULL,
-			"member" varchar(32) NOT NULL
+			"member" varchar(32) NOT NULL,
+			"bot_command" boolean DEFAULT false
 		);
 	`
 	if _, err := storage.DB.Exec(sqlTable); err == nil {
@@ -76,12 +79,14 @@ func saveMessage(m *discordgo.Message, member *discordgo.Member) {
 
 	if timestamp, err := m.Timestamp.Parse(); err == nil {
 		message := `INSERT INTO discord_messages (
-			message_id, channel_id, guild_id, content, timestamp, user_id, member
-			) VALUES (?, ?, ?, ?, ?, ?, ?)
+			message_id, channel_id, guild_id, content,
+			timestamp, user_id, member, bot_command
+			) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 		`
 		message = storage.DB.Rebind(message)
 		if _, err := storage.DB.Exec(message, m.ID, m.ChannelID, _guildID,
-			m.Content, timestamp, m.Author.ID, _member); err != nil {
+			m.Content, timestamp, m.Author.ID, _member,
+			strings.HasPrefix(m.Content, settings.Settings.Discord.BotPrefix)); err != nil {
 			log.Printf("error: %v", err) // We won't store messages, that's what!
 		}
 	} else {
