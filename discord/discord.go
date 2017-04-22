@@ -27,7 +27,7 @@ func InitDiscordSession(token string, qLength int, waitMs string) error {
 			dg.AddHandler(ready)
 			// Add handlers for messages received
 			dg.AddHandler(messageCreate)
-			// dg.AddHandler(messageUpdateEvent) // FIXME: thang is broken
+			dg.AddHandler(messageUpdate)
 			if err := dg.Open(); err == nil {
 				fmt.Println("Successfully launched a new Discord session.")
 			} else {
@@ -82,7 +82,7 @@ func ready(s *discordgo.Session, r *discordgo.Ready) {
 	}
 }
 
-func messageUpdateEvent(s *discordgo.Session, m *discordgo.MessageUpdate) {
+func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 	go _botReactions(s, m.Message, true)
 }
 
@@ -91,6 +91,14 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 }
 
 func _botReactions(s *discordgo.Session, m *discordgo.Message, update bool) {
+	if m.Author == nil { // iopred - Yeah, Author isn't guaranteed to be non nil
+		log.Printf("warning: Author is nil for %s, adding empty object\n", m.ID)
+		m.Author = &discordgo.User{
+			ID: "000000000000000000",
+			Username: "Author N/A",
+		}
+	}
+
 	if m.Author.ID == BotID { // ignore the bot's own messages from processing
 		return
 	}
