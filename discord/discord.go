@@ -27,7 +27,7 @@ func InitDiscordSession(token string, qLength int, waitMs string) error {
 			dg.AddHandler(ready)
 			// Add handlers for messages received
 			dg.AddHandler(messageCreate)
-			dg.AddHandler(messageUpdateEvent)
+			// dg.AddHandler(messageUpdateEvent) // FIXME: thang is broken
 			if err := dg.Open(); err == nil {
 				fmt.Println("Successfully launched a new Discord session.")
 			} else {
