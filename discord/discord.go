@@ -95,11 +95,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 func _botReactions(s *discordgo.Session, m *discordgo.Message, update bool) {
 	if m.Author == nil { // iopred - Yeah, Author isn't guaranteed to be non nil
-		log.Printf("warning: Author is nil for %s, adding empty object\n", m.ID)
-		m.Author = &discordgo.User{
-			ID:       "000000000000000000",
-			Username: "Author N/A",
-		}
+		return // iopred - @Ada, in _botReactions you really should just do <-- that
 	}
 
 	if m.Author.ID == BotID { // ignore the bot's own messages from processing
