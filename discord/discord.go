@@ -2,12 +2,15 @@ package discord
 
 import (
 	"fmt"
-	"github.com/bwmarrin/discordgo"
 	"log"
 	"math/rand"
+	"strings"
 	"time"
 
+	"github.com/bwmarrin/discordgo"
+
 	"github.com/adayoung/ada-bot/discord/bot_reactions"
+	"github.com/adayoung/ada-bot/settings"
 )
 
 var BotID string // Set by InitDiscordSession
@@ -94,7 +97,7 @@ func _botReactions(s *discordgo.Session, m *discordgo.Message, update bool) {
 	if m.Author == nil { // iopred - Yeah, Author isn't guaranteed to be non nil
 		log.Printf("warning: Author is nil for %s, adding empty object\n", m.ID)
 		m.Author = &discordgo.User{
-			ID: "000000000000000000",
+			ID:       "000000000000000000",
 			Username: "Author N/A",
 		}
 	}
@@ -113,6 +116,18 @@ func _botReactions(s *discordgo.Session, m *discordgo.Message, update bool) {
 		}
 
 		if member, err := s.State.Member(guildID, m.Author.ID); err == nil {
+
+			if m.Author.ID == settings.Settings.Discord.BotAdmin {
+				if strings.HasPrefix(m.Content, "!join") {
+					vid := strings.TrimSpace(m.Content[5:])
+					if len(vid) > 0 {
+						JoinVoice(guildID, vid)
+					}
+				} else if strings.HasPrefix(m.Content, "!leave") {
+					LeaveVoice()
+				}
+			}
+
 			_postReactions(m, member, update)
 		} else {
 			log.Printf("warning: %v", err) // Non-fatal error at s.State.Member() call

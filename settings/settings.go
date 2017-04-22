@@ -11,6 +11,7 @@ import (
 type settings struct {
 	Discord struct {
 		BotPrefix string
+		BotAdmin  string
 	}
 
 	IRE struct {
@@ -43,6 +44,7 @@ func (s *settings) Load() error {
 	} else { // settings file does not exist, let's create a new one
 		/* ---------- BEGIN DEFAULT SETTINGS ----------*/
 		Settings.Discord.BotPrefix = "!"
+		Settings.Discord.BotAdmin = "0"
 		Settings.IRE.DeathsightEnabled = true
 		Settings.IRE.LastID = 0
 		/* ----------- END DEFAULT SETTINGS -----------*/
