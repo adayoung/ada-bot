@@ -10,7 +10,7 @@ Since I don't actually know how to sensibly lay out a Golang project, here are s
   * Change the origin fetch/push URL to point to YOUR repository:  
      `cd $GOPATH/src/github.com/adayoung/ada-bot`  
      `git remote set-url origin https://github.com/<YOUR GITHUB USERNAME>/ada-bot.git`
-  * Make your changes, commit, and push!
+  * _Draw a branch_, make your changes, commit, and push!
   * Create a pull request and we'll merge it together!
   * Oh, that's all there is to it really. Suggestions welcome!
 
