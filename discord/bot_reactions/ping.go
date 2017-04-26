@@ -18,7 +18,7 @@ func (p *Ping) HelpDetail(m *discordgo.Message) string {
 	return p.Help()
 }
 
-func (p *Ping) Reaction(m *discordgo.Message, a *discordgo.Member, update bool) string {
+func (p *Ping) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) string {
 	if strings.Contains(strings.ToLower(m.Content), "pong") {
 		return "Ping!"
 	}
@@ -29,10 +29,10 @@ func init() {
 	ping := &Ping{
 		Trigger: "ping",
 	}
-	addReaction(ping.Trigger, ping)
+	addReaction(ping.Trigger, "CREATE", ping)
 
 	pong := &Ping{
 		Trigger: "pong",
 	}
-	addReaction(pong.Trigger, pong)
+	addReaction(pong.Trigger, "CREATE", pong)
 }

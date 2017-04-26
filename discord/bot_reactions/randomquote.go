@@ -27,7 +27,7 @@ func (r *RandomQ) HelpDetail(m *discordgo.Message) string {
 
 var userRegexp *regexp.Regexp = regexp.MustCompile("<@!?([0-9]+)>")
 
-func (r *RandomQ) Reaction(m *discordgo.Message, a *discordgo.Member, u bool) string {
+func (r *RandomQ) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) string {
 	if a.GuildID == "" {
 		return fmt.Sprintf("Oops, %srandom is not available on direct messages :ghost:", settings.Settings.Discord.BotPrefix)
 	}
@@ -49,7 +49,7 @@ func init() {
 	randomq := &RandomQ{
 		Trigger: "random",
 	}
-	addReaction(randomq.Trigger, randomq)
+	addReaction(randomq.Trigger, "CREATE", randomq)
 }
 
 func randomQuote(guildID string, user *string, member *string) string {

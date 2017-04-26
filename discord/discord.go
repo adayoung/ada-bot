@@ -31,6 +31,7 @@ func InitDiscordSession(token string, qLength int, waitMs string) error {
 			// Add handlers for messages received
 			dg.AddHandler(messageCreate)
 			dg.AddHandler(messageUpdate)
+			dg.AddHandler(messageDelete)
 			if err := dg.Open(); err == nil {
 				fmt.Println("Successfully launched a new Discord session.")
 			} else {
@@ -85,21 +86,27 @@ func ready(s *discordgo.Session, r *discordgo.Ready) {
 	}
 }
 
-func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
-	go _botReactions(s, m.Message, true)
-}
-
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
-	go _botReactions(s, m.Message, false)
+	go _botReactions(s, m.Message, "CREATE")
 }
 
-func _botReactions(s *discordgo.Session, m *discordgo.Message, update bool) {
+func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
+	go _botReactions(s, m.Message, "UPDATE")
+}
+
+func messageDelete(s *discordgo.Session, m *discordgo.MessageDelete) {
+	go _botReactions(s, m.Message, "DELETE") // FIXME: Does not work, m.Author = nil
+}
+
+func _botReactions(s *discordgo.Session, m *discordgo.Message, mType string) {
 	if m.Author == nil { // iopred - Yeah, Author isn't guaranteed to be non nil
 		return // iopred - @Ada, in _botReactions you really should just do <-- that
 	}
 
-	if m.Author.ID == BotID { // ignore the bot's own messages from processing
-		return
+	if m.Author != nil {
+		if m.Author.ID == BotID { // ignore the bot's own messages from processing
+			return
+		}
 	}
 
 	if channel, err := s.State.Channel(m.ChannelID); err == nil {
@@ -107,7 +114,7 @@ func _botReactions(s *discordgo.Session, m *discordgo.Message, update bool) {
 
 		if guildID == "" { // log direct messages sent to the bot
 			fmt.Printf("Message received from %s: %s\n", m.Author.Username, m.Content)
-			_postReactions(m, &discordgo.Member{}, update)
+			_postReactions(m, &discordgo.Member{}, mType)
 			return
 		}
 
@@ -124,7 +131,7 @@ func _botReactions(s *discordgo.Session, m *discordgo.Message, update bool) {
 				}
 			}
 
-			_postReactions(m, member, update)
+			_postReactions(m, member, mType)
 		} else {
 			log.Printf("warning: %v", err) // Non-fatal error at s.State.Member() call
 		}
@@ -133,8 +140,8 @@ func _botReactions(s *discordgo.Session, m *discordgo.Message, update bool) {
 	}
 }
 
-func _postReactions(m *discordgo.Message, member *discordgo.Member, update bool) {
-	for _, reaction := range bot_reactions.GetReactions(m, member, update) {
+func _postReactions(m *discordgo.Message, member *discordgo.Member, mType string) {
+	for _, reaction := range bot_reactions.GetReactions(m, member, mType) {
 		PostMessage(m.ChannelID, reaction)
 	}
 }

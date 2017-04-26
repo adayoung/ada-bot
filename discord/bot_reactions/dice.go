@@ -28,10 +28,10 @@ func (d *dice) HelpDetail(m *discordgo.Message) string {
 
 var diceRegexp = regexp.MustCompile(`(?i)([0-9]+)d([0-9]+)(?:\+([0-9]+))?`)
 
-func (d *dice) Reaction(m *discordgo.Message, a *discordgo.Member, u bool) string {
+func (d *dice) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) string {
 	request := strings.TrimSpace(m.Content[len(settings.Settings.Discord.BotPrefix)+len(d.Trigger):])
 	if !(len(request) > 0) {
-		request = "6d6"
+		request = "1d6"
 	}
 	diceRoll := ""
 	total := 0
@@ -73,7 +73,7 @@ func (d *dice) Reaction(m *discordgo.Message, a *discordgo.Member, u bool) strin
 	}
 
 	if len(diceRoll) > 0 {
-		return fmt.Sprintf("```Dice roll: %s\tTotal: %d```", diceRoll, total)
+		return fmt.Sprintf("```Dice roll [%s]: %s\tTotal: %d```", request, diceRoll, total)
 	}
 	return ""
 }
@@ -84,5 +84,5 @@ func init() {
 	_dice := &dice{
 		Trigger: "dice",
 	}
-	addReaction(_dice.Trigger, _dice)
+	addReaction(_dice.Trigger, "CREATE", _dice)
 }
