@@ -32,7 +32,8 @@ func (p *Ping) HelpDetail(m *discordgo.Message) string {
 
 // The actual reaction, the full message content is available in m.Content
 // The returned string is sent to the channel where the trigger was seen
-func (p *Ping) Reaction(m *discordgo.Message, a *discordgo.Member, update bool) string {
+func (p *Ping) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) string {
+	// mType can be CREATE, UPDATE, or DELETE at the moment
 	return "Pong!"
 }
 
@@ -41,7 +42,7 @@ func init() {
 	ping := &Ping{
 		Trigger: "ping", // Yes, it's "ping" and NOT "!ping".
 	}
-	addReaction(ping.Trigger, ping)
+	addReaction(ping.Trigger, "CREATE", ping)
 }
 ```
 

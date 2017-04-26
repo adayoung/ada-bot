@@ -95,13 +95,13 @@ func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 }
 
 func messageDelete(s *discordgo.Session, m *discordgo.MessageDelete) {
-	go _botReactions(s, m.Message, "DELETE") // FIXME: Does not work, m.Author = nil
+	go _botReactions(s, m.Message, "DELETE")
 }
 
 func _botReactions(s *discordgo.Session, m *discordgo.Message, mType string) {
-	if m.Author == nil { // iopred - Yeah, Author isn't guaranteed to be non nil
-		return // iopred - @Ada, in _botReactions you really should just do <-- that
-	}
+	// if m.Author == nil { // iopred - Yeah, Author isn't guaranteed to be non nil
+	// 	return // iopred - @Ada, in _botReactions you really should just do <-- that
+	// }
 
 	if m.Author != nil {
 		if m.Author.ID == BotID { // ignore the bot's own messages from processing
@@ -118,7 +118,13 @@ func _botReactions(s *discordgo.Session, m *discordgo.Message, mType string) {
 			return
 		}
 
-		if member, err := s.State.Member(guildID, m.Author.ID); err == nil {
+		var err error
+		var member *discordgo.Member
+		if m.Author != nil {
+			if member, err = s.State.Member(guildID, m.Author.ID); err != nil {
+				member = nil
+				log.Printf("warning: %v", err) // Non-fatal error at s.State.Member() call
+			}
 
 			if m.Author.ID == settings.Settings.Discord.BotAdmin {
 				if strings.HasPrefix(m.Content, "!join") {
@@ -130,11 +136,9 @@ func _botReactions(s *discordgo.Session, m *discordgo.Message, mType string) {
 					LeaveVoice()
 				}
 			}
-
-			_postReactions(m, member, mType)
-		} else {
-			log.Printf("warning: %v", err) // Non-fatal error at s.State.Member() call
 		}
+		_postReactions(m, member, mType)
+
 	} else {
 		log.Printf("warning: %v", err) // Non-fatal error at s.State.Channel() call
 	}

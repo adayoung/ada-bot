@@ -66,21 +66,35 @@ func saveMessage(m *discordgo.Message, member *discordgo.Member, mType string) {
 		return // We're not ready to save events
 	}
 
-	if m.Author.Bot {
-		return // Do not log messages posted by other bots
+	if m.Author != nil {
+		if m.Author.Bot {
+			return // Do not log messages posted by other bots
+		}
 	}
 
 	var _member string
 	var _guildID string
-	if member.GuildID != "" {
-		_guildID = member.GuildID
-		if member.Nick != "" {
-			_member = member.Nick
+
+	if m.Author != nil {
+		if member.GuildID != "" {
+			_guildID = member.GuildID
+			if member.Nick != "" {
+				_member = member.Nick
+			} else {
+				_member = member.User.Username
+			}
 		} else {
-			_member = member.User.Username
+			_member = m.Author.Username
 		}
-	} else {
-		_member = m.Author.Username
+	}
+
+	if mType == "DELETE" { // Deleted Message
+		message := "DELETE FROM discord_messages WHERE message_id=?"
+		message = storage.DB.Rebind(message)
+		if _, err := storage.DB.Exec(message, m.ID); err != nil {
+			log.Printf("error: %v", err) // Oops, something wrong with deleting message
+		}
+		return
 	}
 
 	if timestamp, err := m.Timestamp.Parse(); err == nil {
@@ -101,12 +115,6 @@ func saveMessage(m *discordgo.Message, member *discordgo.Member, mType string) {
 			message = storage.DB.Rebind(message)
 			if _, err := storage.DB.Exec(message, m.Content, m.ID); err != nil {
 				log.Printf("error: %v", err) // Oops, something wrong with updating message
-			}
-		} else if mType == "DELETE" { // Deleted Message
-			message := "DELETE FROM discord_messages WHERE message_id=?"
-			message = storage.DB.Rebind(message)
-			if _, err := storage.DB.Exec(message, m.ID); err != nil {
-				log.Printf("error: %v", err) // Oops, something wrong with deleting message
 			}
 		}
 	} else {
