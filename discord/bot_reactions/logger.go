@@ -88,17 +88,8 @@ func saveMessage(m *discordgo.Message, member *discordgo.Member, mType string) {
 		}
 	}
 
-	if mType == "DELETE" { // Deleted Message
-		message := "DELETE FROM discord_messages WHERE message_id=?"
-		message = storage.DB.Rebind(message)
-		if _, err := storage.DB.Exec(message, m.ID); err != nil {
-			log.Printf("error: %v", err) // Oops, something wrong with deleting message
-		}
-		return
-	}
-
-	if timestamp, err := m.Timestamp.Parse(); err == nil {
-		if mType == "CREATE" { // New Message
+	if mType == "CREATE" { // New Message
+		if timestamp, err := m.Timestamp.Parse(); err == nil {
 			message := `INSERT INTO discord_messages (
 				message_id, channel_id, guild_id, content,
 				timestamp, user_id, member, bot_command
@@ -110,14 +101,29 @@ func saveMessage(m *discordgo.Message, member *discordgo.Member, mType string) {
 				strings.HasPrefix(m.Content, settings.Settings.Discord.BotPrefix)); err != nil {
 				log.Printf("error: %v", err) // We won't store messages, that's what!
 			}
-		} else if mType == "UPDATE" { // Updated Message
-			message := "UPDATE discord_messages SET content=? WHERE message_id=?"
+		} else {
+			log.Printf("error: %v", err) // Error at m.Timestamp.Parse() call
+		}
+	}
+
+	if mType == "UPDATE" { // Updated Message
+		if timestamp, err := m.EditedTimestamp.Parse(); err == nil {
+			message := "UPDATE discord_messages SET content=?, timestamp=? WHERE message_id=?"
 			message = storage.DB.Rebind(message)
-			if _, err := storage.DB.Exec(message, m.Content, m.ID); err != nil {
+			if _, err := storage.DB.Exec(message, m.Content, timestamp, m.ID); err != nil {
 				log.Printf("error: %v", err) // Oops, something wrong with updating message
 			}
+		} else {
+			log.Printf("error: %v", err) // Error at m.Timestamp.Parse() call
 		}
-	} else {
-		log.Printf("error: %v", err) // Error at m.Timestamp.Parse() call
+	}
+
+	if mType == "DELETE" { // Deleted Message
+		message := "DELETE FROM discord_messages WHERE message_id=?"
+		message = storage.DB.Rebind(message)
+		if _, err := storage.DB.Exec(message, m.ID); err != nil {
+			log.Printf("error: %v", err) // Oops, something wrong with deleting message
+		}
+		return
 	}
 }
