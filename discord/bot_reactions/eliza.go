@@ -19,7 +19,7 @@ func (e *eliza) Help() string {
 	return "Talk to Eliza!"
 }
 
-func (e *eliza) HelpDetail(m *discordgo.Message) string {
+func (e *eliza) HelpDetail() string {
 	return e.Help()
 }
 

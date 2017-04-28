@@ -21,7 +21,7 @@ func (r *randomQ) Help() string {
 	return "Random Quote!"
 }
 
-func (r *randomQ) HelpDetail(m *discordgo.Message) string {
+func (r *randomQ) HelpDetail() string {
 	return r.Help()
 }
 

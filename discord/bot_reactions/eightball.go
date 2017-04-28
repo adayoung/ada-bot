@@ -40,7 +40,7 @@ func (p *eightBall) Help() string {
 	return "Let the magic 8-ball guide your destiny (Y/N questions only)."
 }
 
-func (p *eightBall) HelpDetail(m *discordgo.Message) string {
+func (p *eightBall) HelpDetail() string {
 	return p.Help()
 }
 

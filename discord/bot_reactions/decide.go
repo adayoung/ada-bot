@@ -19,7 +19,7 @@ func (d *decide) Help() string {
 	return "Let the bot decide between two or more things for you!"
 }
 
-func (d *decide) HelpDetail(*discordgo.Message) string {
+func (d *decide) HelpDetail() string {
 	return d.Help()
 }
 

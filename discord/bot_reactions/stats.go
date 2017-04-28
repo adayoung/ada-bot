@@ -34,7 +34,7 @@ func (s *stats) Help() string {
 	return "I have statistics!"
 }
 
-func (s *stats) HelpDetail(m *discordgo.Message) string {
+func (s *stats) HelpDetail() string {
 	return s.Help()
 }
 

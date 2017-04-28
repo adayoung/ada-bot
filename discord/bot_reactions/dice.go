@@ -22,7 +22,7 @@ func (d *dice) Help() string {
 	return fmt.Sprintf("Roll a dice! DnD style, %sdice xdy+z", settings.Settings.Discord.BotPrefix)
 }
 
-func (d *dice) HelpDetail(m *discordgo.Message) string {
+func (d *dice) HelpDetail() string {
 	return d.Help()
 }
 

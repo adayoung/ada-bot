@@ -14,7 +14,7 @@ func (p *ping) Help() string {
 	return "Pong!"
 }
 
-func (p *ping) HelpDetail(m *discordgo.Message) string {
+func (p *ping) HelpDetail() string {
 	return p.Help()
 }
 

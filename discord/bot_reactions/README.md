@@ -26,14 +26,14 @@ func (p *Ping) Help() string {
 }
 
 // This is detailed help and it's supposed to be invoked when people do !help <trigger>
-func (p *Ping) HelpDetail(m *discordgo.Message) string {
+func (p *Ping) HelpDetail() string {
 	return p.Help()
 }
 
 // The actual reaction, the full message content is available in m.Content
 // The returned string is sent to the channel where the trigger was seen
 func (p *Ping) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) string {
-	// mType can be CREATE, UPDATE, or DELETE at the moment
+	// mType can be CREATE, UPDATE, or DELETE (of messages on Discord) at the moment
 	return "Pong!"
 }
 
@@ -42,7 +42,7 @@ func init() {
 	ping := &Ping{
 		Trigger: "ping", // Yes, it's "ping" and NOT "!ping".
 	}
-	addReaction(ping.Trigger, "CREATE", ping)
+	addReaction(ping.Trigger, "CREATE", ping) // the second argument is mType
 }
 ```
 

@@ -14,7 +14,7 @@ import (
 
 type BotReaction interface {
 	Help() string
-	HelpDetail(*discordgo.Message) string
+	HelpDetail() string
 	Reaction(message *discordgo.Message, author *discordgo.Member, mType string) string
 }
 
@@ -58,7 +58,13 @@ func GetReactions(message *discordgo.Message, author *discordgo.Member, mType st
 	}
 
 	if strings.TrimSpace(strings.ToLower(message.Content)) == fmt.Sprintf("%shelp", settings.Settings.Discord.BotPrefix) {
-		reactions = append(reactions, GenHelp())
+		reactions = append(reactions, GenHelp(""))
+		return reactions
+	}
+
+	if strings.HasPrefix(strings.ToLower(message.Content), fmt.Sprintf("%shelp", settings.Settings.Discord.BotPrefix)) {
+		helpDetail := strings.TrimSpace(message.Content[len(settings.Settings.Discord.BotPrefix)+4:]) // len("help") -> 4
+		reactions = append(reactions, GenHelp(helpDetail))
 		return reactions
 	}
 
@@ -73,7 +79,7 @@ func GetReactions(message *discordgo.Message, author *discordgo.Member, mType st
 	return reactions
 }
 
-func GenHelp() string {
+func GenHelp(helpDetail string) string {
 	w := &tabwriter.Writer{}
 	buf := &bytes.Buffer{}
 
@@ -88,13 +94,24 @@ func GenHelp() string {
 	}
 	sort.Strings(triggers)
 
-	fmt.Fprintf(w, "I have the following commands available:\n")
+	if helpDetail == "" {
+		fmt.Fprintf(w, "I have the following commands available:\n")
+	} else {
+		fmt.Fprintf(w, fmt.Sprintf("%s%s:\n\n", settings.Settings.Discord.BotPrefix, helpDetail))
+	}
+
 	for _, trigger := range triggers {
 		for _, item := range _botReactions["CREATE"][trigger] {
-			fmt.Fprintf(w, "%s%s \t- \t%s\n",
-				settings.Settings.Discord.BotPrefix, trigger,
-				item.Help(),
-			)
+			if helpDetail == "" {
+				fmt.Fprintf(w, "%s%s \t- \t%s\n",
+					settings.Settings.Discord.BotPrefix, trigger,
+					item.Help(),
+				)
+			} else {
+				if trigger == helpDetail {
+					fmt.Fprintf(w, "%s\n", item.HelpDetail())
+				}
+			}
 		}
 	}
 	fmt.Fprintf(w, "```")
@@ -102,15 +119,4 @@ func GenHelp() string {
 	w.Flush()
 	out := buf.String()
 	return out
-}
-
-func GetHelpDetail(trigger string, message *discordgo.Message) string {
-	return "" // TODO: Not implemented yet
-	// var help []string
-	// if _, ok := _botReactions[trigger]; ok {
-	// 	for _, reaction := range _botReactions[trigger] {
-	// 		help = append(help, reaction.HelpDetail(message))
-	// 	}
-	// }
-	// return help
 }

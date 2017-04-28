@@ -19,7 +19,7 @@ func (w *whois) Help() string {
 	return "Lookup <name> in game and report findings."
 }
 
-func (w *whois) HelpDetail(m *discordgo.Message) string {
+func (w *whois) HelpDetail() string {
 	return w.Help()
 }
 

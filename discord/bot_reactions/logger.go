@@ -18,7 +18,7 @@ func (l *Logger) Help() string {
 	return ""
 }
 
-func (l *Logger) HelpDetail(m *discordgo.Message) string {
+func (l *Logger) HelpDetail() string {
 	return l.Help()
 }
 
