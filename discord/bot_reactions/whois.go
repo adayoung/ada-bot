@@ -11,19 +11,19 @@ import (
 	"github.com/adayoung/ada-bot/settings"
 )
 
-type Whois struct {
+type whois struct {
 	Trigger string
 }
 
-func (w *Whois) Help() string {
+func (w *whois) Help() string {
 	return "Lookup <name> in game and report findings."
 }
 
-func (w *Whois) HelpDetail(m *discordgo.Message) string {
+func (w *whois) HelpDetail(m *discordgo.Message) string {
 	return w.Help()
 }
 
-func (w *Whois) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) string {
+func (w *whois) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) string {
 	rPlayer := strings.ToLower(strings.TrimSpace(m.Content[len(settings.Settings.Discord.BotPrefix)+len(w.Trigger):]))
 	if gPlayer, err := ire.GetPlayer(rPlayer); err == nil {
 		return fmt.Sprintf("```%s```", gPlayer)
@@ -34,8 +34,8 @@ func (w *Whois) Reaction(m *discordgo.Message, a *discordgo.Member, mType string
 }
 
 func init() {
-	whois := &Whois{
+	_whois := &whois{
 		Trigger: "whois",
 	}
-	addReaction(whois.Trigger, "CREATE", whois)
+	addReaction(_whois.Trigger, "CREATE", _whois)
 }

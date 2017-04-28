@@ -11,19 +11,19 @@ import (
 	"github.com/adayoung/ada-bot/settings"
 )
 
-type Decide struct {
+type decide struct {
 	Trigger string
 }
 
-func (d *Decide) Help() string {
+func (d *decide) Help() string {
 	return "Let the bot decide between two or more things for you!"
 }
 
-func (d *Decide) HelpDetail(*discordgo.Message) string {
+func (d *decide) HelpDetail(*discordgo.Message) string {
 	return d.Help()
 }
 
-func (d *Decide) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) string {
+func (d *decide) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) string {
 	choices := strings.Split(m.Content[len(settings.Settings.Discord.BotPrefix)+len(d.Trigger):], " or ")
 	theAnswer := choices[rand.Intn(len(choices))]
 	return fmt.Sprintf("The correct answer is **%s**", strings.TrimSpace(theAnswer))
@@ -32,8 +32,8 @@ func (d *Decide) Reaction(m *discordgo.Message, a *discordgo.Member, mType strin
 func init() {
 	rand.Seed(time.Now().Unix())
 
-	decide := &Decide{
+	_decide := &decide{
 		Trigger: "decide",
 	}
-	addReaction(decide.Trigger, "CREATE", decide)
+	addReaction(_decide.Trigger, "CREATE", _decide)
 }

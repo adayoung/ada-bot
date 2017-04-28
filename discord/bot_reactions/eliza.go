@@ -6,26 +6,26 @@ import (
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
-	eliza "github.com/necrophonic/go-eliza"
+	_eliza "github.com/necrophonic/go-eliza"
 
 	"github.com/adayoung/ada-bot/settings"
 )
 
-type Eliza struct {
+type eliza struct {
 	Trigger string
 }
 
-func (e *Eliza) Help() string {
+func (e *eliza) Help() string {
 	return "Talk to Eliza!"
 }
 
-func (e *Eliza) HelpDetail(m *discordgo.Message) string {
+func (e *eliza) HelpDetail(m *discordgo.Message) string {
 	return e.Help()
 }
 
 var requestRegexp *regexp.Regexp = regexp.MustCompile("(?i)[^a-z!',. ]+")
 
-func (e *Eliza) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) string {
+func (e *eliza) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) string {
 	if strings.HasPrefix(m.Content, settings.Settings.Discord.BotPrefix) {
 		return "" // It's an explicit bot reaction-request, bail out
 	}
@@ -35,7 +35,7 @@ func (e *Eliza) Reaction(m *discordgo.Message, a *discordgo.Member, mType string
 	}
 
 	request := requestRegexp.ReplaceAllString(m.Content, "")
-	response, err := eliza.AnalyseString(request)
+	response, err := _eliza.AnalyseString(request)
 	if err != nil {
 		log.Printf("error: %v", err) // Error with eliza.AnalyseString() call
 	}
@@ -43,7 +43,7 @@ func (e *Eliza) Reaction(m *discordgo.Message, a *discordgo.Member, mType string
 }
 
 func init() {
-	_eliza := &Eliza{
+	_eliza := &eliza{
 		Trigger: "*",
 	}
 	addReaction(_eliza.Trigger, "CREATE", _eliza)

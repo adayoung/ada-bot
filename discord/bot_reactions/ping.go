@@ -6,19 +6,19 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-type Ping struct {
+type ping struct {
 	Trigger string
 }
 
-func (p *Ping) Help() string {
+func (p *ping) Help() string {
 	return "Pong!"
 }
 
-func (p *Ping) HelpDetail(m *discordgo.Message) string {
+func (p *ping) HelpDetail(m *discordgo.Message) string {
 	return p.Help()
 }
 
-func (p *Ping) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) string {
+func (p *ping) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) string {
 	if strings.Contains(strings.ToLower(m.Content), "pong") {
 		return "Ping!"
 	}
@@ -26,13 +26,13 @@ func (p *Ping) Reaction(m *discordgo.Message, a *discordgo.Member, mType string)
 }
 
 func init() {
-	ping := &Ping{
+	_ping := &ping{
 		Trigger: "ping",
 	}
-	addReaction(ping.Trigger, "CREATE", ping)
+	addReaction(_ping.Trigger, "CREATE", _ping)
 
-	pong := &Ping{
+	_pong := &ping{
 		Trigger: "pong",
 	}
-	addReaction(pong.Trigger, "CREATE", pong)
+	addReaction(_pong.Trigger, "CREATE", _pong)
 }

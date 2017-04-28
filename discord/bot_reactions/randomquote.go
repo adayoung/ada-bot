@@ -13,46 +13,46 @@ import (
 	"github.com/adayoung/ada-bot/utils/storage"
 )
 
-type RandomQ struct {
+type randomQ struct {
 	Trigger string
 }
 
-func (r *RandomQ) Help() string {
+func (r *randomQ) Help() string {
 	return "Random Quote!"
 }
 
-func (r *RandomQ) HelpDetail(m *discordgo.Message) string {
+func (r *randomQ) HelpDetail(m *discordgo.Message) string {
 	return r.Help()
 }
 
 var userRegexp *regexp.Regexp = regexp.MustCompile("<@!?([0-9]+)>")
 
-func (r *RandomQ) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) string {
+func (r *randomQ) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) string {
 	if a.GuildID == "" {
 		return fmt.Sprintf("Oops, %srandom is not available on direct messages :ghost:", settings.Settings.Discord.BotPrefix)
 	}
 
 	if m.Content == fmt.Sprintf("%s%s", settings.Settings.Discord.BotPrefix, r.Trigger) {
-		return randomQuote(a.GuildID, nil, nil)
+		return getRandomQuote(a.GuildID, nil, nil)
 	} else {
 		request := strings.TrimSpace(m.Content[len(settings.Settings.Discord.BotPrefix)+len(r.Trigger):])
 		userID := userRegexp.FindStringSubmatch(request)
 		if userID != nil {
-			return randomQuote(a.GuildID, &userID[1], nil)
+			return getRandomQuote(a.GuildID, &userID[1], nil)
 		} else {
-			return randomQuote(a.GuildID, nil, &request)
+			return getRandomQuote(a.GuildID, nil, &request)
 		}
 	}
 }
 
 func init() {
-	randomq := &RandomQ{
+	_randomq := &randomQ{
 		Trigger: "random",
 	}
-	addReaction(randomq.Trigger, "CREATE", randomq)
+	addReaction(_randomq.Trigger, "CREATE", _randomq)
 }
 
-func randomQuote(guildID string, user *string, member *string) string {
+func getRandomQuote(guildID string, user *string, member *string) string {
 	query := "SELECT member, content, channel_id, timestamp from discord_messages WHERE guild_id=?"
 	if user != nil {
 		query = fmt.Sprintf("%s AND user_id=?", query)

@@ -37,7 +37,7 @@ func GetReactions(message *discordgo.Message, author *discordgo.Member, mType st
 	var reactions []string
 	if _, ok := _botReactions[mType]["*"]; ok { // Run wildcard triggers first
 		for _, reaction := range _botReactions[mType]["*"] {
-			if author != nil {
+			if author != nil { // FIXME: This can probably be rephrased to something better
 				if author.GuildID == "" { // This is useful only for eliza at the moment :joy:
 					reactions = append(reactions, reaction.Reaction(message, author, mType))
 				} else {

@@ -8,7 +8,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-var Magic []string = []string{
+var magic []string = []string{
 	"By the Logos, it is certain",
 	"It is decidedly so",
 	"Without a doubt",
@@ -32,28 +32,28 @@ var Magic []string = []string{
 	"No -- Lorielan, the Jade Empress",
 }
 
-type EightBall struct {
+type eightBall struct {
 	Trigger string
 }
 
-func (p *EightBall) Help() string {
+func (p *eightBall) Help() string {
 	return "Let the magic 8-ball guide your destiny (Y/N questions only)."
 }
 
-func (p *EightBall) HelpDetail(m *discordgo.Message) string {
+func (p *eightBall) HelpDetail(m *discordgo.Message) string {
 	return p.Help()
 }
 
-func (p *EightBall) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) string {
-	theAnswer := Magic[rand.Intn(len(Magic))]
+func (p *eightBall) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) string {
+	theAnswer := magic[rand.Intn(len(magic))]
 	return fmt.Sprintf("```%s```", theAnswer)
 }
 
 func init() {
 	rand.Seed(time.Now().Unix())
 
-	eightball := &EightBall{
+	_eightball := &eightBall{
 		Trigger: "8ball",
 	}
-	addReaction(eightball.Trigger, "CREATE", eightball)
+	addReaction(_eightball.Trigger, "CREATE", _eightball)
 }
