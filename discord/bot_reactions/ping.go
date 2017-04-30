@@ -2,7 +2,6 @@ package bot_reactions
 
 import (
 	"strings"
-	"time"
 
 	"github.com/bwmarrin/discordgo"
 )

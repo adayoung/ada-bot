@@ -28,7 +28,8 @@ func (d *dice) HelpDetail() string {
 
 var diceRegexp = regexp.MustCompile(`(?i)([0-9]+)d([0-9]+)(?:\+([0-9]+))?`)
 
-func (d *dice) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) string {
+func (d *dice) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) Reaction {
+	var response string
 	request := strings.TrimSpace(m.Content[len(settings.Settings.Discord.BotPrefix)+len(d.Trigger):])
 	if !(len(request) > 0) {
 		request = "1d6"
@@ -40,11 +41,11 @@ func (d *dice) Reaction(m *discordgo.Message, a *discordgo.Member, mType string)
 		numDice, numSides, addNum, roll := dMatch[1], dMatch[2], dMatch[3], 0
 		if _numDice, err := strconv.Atoi(numDice); err == nil {
 			if _numDice > 20 {
-				return "But I have small hands, I can't hold that many dice :frowning:"
+				response = "But I have small hands, I can't hold that many dice :frowning:"
 			}
 			if _numSides, err := strconv.Atoi(numSides); err == nil {
 				if _numSides > 32 {
-					return "Wow those are strange die, I don't even know how to roll 'em :confused:"
+					response = "Wow those are strange die, I don't even know how to roll 'em :confused:"
 				}
 				for dice := 0; dice < _numDice; dice++ {
 					if _numSides > 0 {
@@ -73,9 +74,9 @@ func (d *dice) Reaction(m *discordgo.Message, a *discordgo.Member, mType string)
 	}
 
 	if len(diceRoll) > 0 {
-		return fmt.Sprintf("```Dice roll [%s]: %s\tTotal: %d```", request, diceRoll, total)
+		response = fmt.Sprintf("```Dice roll [%s]: %s\tTotal: %d```", request, diceRoll, total)
 	}
-	return ""
+	return Reaction{Text: response}
 }
 
 func init() {

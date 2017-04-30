@@ -32,9 +32,9 @@ func (p *Ping) HelpDetail() string {
 
 // The actual reaction, the full message content is available in m.Content
 // The returned string is sent to the channel where the trigger was seen
-func (p *Ping) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) string {
+func (p *Ping) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) Reaction {
 	// mType can be CREATE, UPDATE, or DELETE (of messages on Discord) at the moment
-	return "Pong!"
+	return Reaction{Text: "Pong!"}
 }
 
 // Here's where you add your 'trigger' and register your reaction with the dispatcher

@@ -25,13 +25,13 @@ func (e *eliza) HelpDetail() string {
 
 var requestRegexp *regexp.Regexp = regexp.MustCompile("(?i)[^a-z!',. ]+")
 
-func (e *eliza) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) string {
+func (e *eliza) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) Reaction {
 	if strings.HasPrefix(m.Content, settings.Settings.Discord.BotPrefix) {
-		return "" // It's an explicit bot reaction-request, bail out
+		return Reaction{Text: ""} // It's an explicit bot reaction-request, bail out
 	}
 
 	if a.GuildID != "" {
-		return "" // Let's not talk on a channel unless it's a DM
+		return Reaction{Text: ""} // Let's not talk on a channel unless it's a DM
 	}
 
 	request := requestRegexp.ReplaceAllString(m.Content, "")
@@ -39,7 +39,7 @@ func (e *eliza) Reaction(m *discordgo.Message, a *discordgo.Member, mType string
 	if err != nil {
 		log.Printf("error: %v", err) // Error with eliza.AnalyseString() call
 	}
-	return response
+	return Reaction{Text: response}
 }
 
 func init() {

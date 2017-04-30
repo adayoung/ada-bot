@@ -38,7 +38,7 @@ func (s *stats) HelpDetail() string {
 	return s.Help()
 }
 
-func (s *stats) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) string {
+func (s *stats) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) Reaction {
 	stats := runtime.MemStats{}
 	runtime.ReadMemStats(&stats)
 
@@ -57,7 +57,7 @@ func (s *stats) Reaction(m *discordgo.Message, a *discordgo.Member, mType string
 
 	w.Flush()
 	out := buf.String()
-	return out
+	return Reaction{Text: out}
 }
 
 func init() {

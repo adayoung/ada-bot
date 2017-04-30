@@ -22,9 +22,9 @@ func (l *Logger) HelpDetail() string {
 	return l.Help()
 }
 
-func (l *Logger) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) string {
+func (l *Logger) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) Reaction {
 	saveMessage(m, a, mType)
-	return "" // We don't talk, we just listen -sagenod-
+	return Reaction{Text: ""} // We don't talk, we just listen -sagenod-
 }
 
 func init() {

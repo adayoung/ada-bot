@@ -27,22 +27,25 @@ func (r *randomQ) HelpDetail() string {
 
 var userRegexp *regexp.Regexp = regexp.MustCompile("<@!?([0-9]+)>")
 
-func (r *randomQ) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) string {
+func (r *randomQ) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) Reaction {
+	var response string
 	if a.GuildID == "" {
-		return fmt.Sprintf("Oops, %srandom is not available on direct messages :ghost:", settings.Settings.Discord.BotPrefix)
+		response = fmt.Sprintf("Oops, %srandom is not available on direct messages :ghost:", settings.Settings.Discord.BotPrefix)
+		return Reaction{Text: response}
 	}
 
 	if m.Content == fmt.Sprintf("%s%s", settings.Settings.Discord.BotPrefix, r.Trigger) {
-		return getRandomQuote(a.GuildID, nil, nil)
+		response = getRandomQuote(a.GuildID, nil, nil)
 	} else {
 		request := strings.TrimSpace(m.Content[len(settings.Settings.Discord.BotPrefix)+len(r.Trigger):])
 		userID := userRegexp.FindStringSubmatch(request)
 		if userID != nil {
-			return getRandomQuote(a.GuildID, &userID[1], nil)
+			response = getRandomQuote(a.GuildID, &userID[1], nil)
 		} else {
-			return getRandomQuote(a.GuildID, nil, &request)
+			response = getRandomQuote(a.GuildID, nil, &request)
 		}
 	}
+	return Reaction{Text: response}
 }
 
 func init() {

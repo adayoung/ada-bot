@@ -23,14 +23,17 @@ func (w *whois) HelpDetail() string {
 	return w.Help()
 }
 
-func (w *whois) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) string {
+func (w *whois) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) Reaction {
+	var response string
 	rPlayer := strings.ToLower(strings.TrimSpace(m.Content[len(settings.Settings.Discord.BotPrefix)+len(w.Trigger):]))
 	if gPlayer, err := ire.GetPlayer(rPlayer); err == nil {
-		return fmt.Sprintf("```%s```", gPlayer)
+		response = fmt.Sprintf("```%s```", gPlayer)
+		return Reaction{Text: response}
 	} else {
 		log.Printf("error: %v", err) // Not a fatal error
 	}
-	return fmt.Sprintf("Oops, I couldn't find %s :frowning:", rPlayer)
+	response = fmt.Sprintf("Oops, I couldn't find %s :frowning:", rPlayer)
+	return Reaction{Text: response}
 }
 
 func init() {
