@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"sort"
 	"strings"
-	"time"
 	"text/tabwriter"
+	"time"
 
 	"github.com/bwmarrin/discordgo"
 
@@ -15,11 +15,11 @@ import (
 
 type Reaction struct {
 	Timer *time.Duration
-	Text string
+	Text  string
 }
 
 type taggedReaction struct {
-	Trigger string
+	Trigger      string
 	TriggerIndex int
 	Reaction
 }
@@ -51,7 +51,7 @@ func GetReactions(message *discordgo.Message, author *discordgo.Member, mType st
 	if len(gTrigger) > 0 {
 		if _, ok := _botReactions[mType][gTrigger]; ok {
 			reactions = append(reactions, taggedReaction{
-				Trigger: gTrigger,
+				Trigger:  gTrigger,
 				Reaction: _botReactions[mType][gTrigger][gTIndex].Reaction(message, author, mType)},
 			)
 		}
@@ -95,9 +95,9 @@ func GetReactions(message *discordgo.Message, author *discordgo.Member, mType st
 		if strings.HasPrefix(strings.ToLower(message.Content[len(settings.Settings.Discord.BotPrefix):]), strings.ToLower(trigger)) {
 			for tIndex, reaction := range _reactions {
 				reactions = append(reactions, taggedReaction{
-					Trigger: trigger,
+					Trigger:      trigger,
 					TriggerIndex: tIndex,
-					Reaction: reaction.Reaction(message, author, mType)},
+					Reaction:     reaction.Reaction(message, author, mType)},
 				)
 			}
 		}

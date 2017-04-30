@@ -147,7 +147,7 @@ func _botReactions(s *discordgo.Session, m *discordgo.Message, mType string) {
 func _postReactions(m *discordgo.Message, member *discordgo.Member, mType string) {
 	for _, reaction := range bot_reactions.GetReactions(m, member, mType, "", 0) {
 		if reaction.Timer != nil {
-			time.AfterFunc(*reaction.Timer, func(){
+			time.AfterFunc(*reaction.Timer, func() {
 				for _, reaction := range bot_reactions.GetReactions(m, member, mType, reaction.Trigger, reaction.TriggerIndex) {
 					PostMessage(m.ChannelID, reaction.Text)
 				}
