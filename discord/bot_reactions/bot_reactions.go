@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"sort"
 	"strings"
+	"time"
 	"text/tabwriter"
 
 	"github.com/bwmarrin/discordgo"
@@ -12,10 +13,21 @@ import (
 	"github.com/adayoung/ada-bot/settings"
 )
 
+type Reaction struct {
+	Timer *time.Duration
+	Text string
+}
+
+type taggedReaction struct {
+	Trigger string
+	TriggerIndex int
+	Reaction
+}
+
 type BotReaction interface {
 	Help() string
 	HelpDetail() string
-	Reaction(message *discordgo.Message, author *discordgo.Member, mType string) string
+	Reaction(message *discordgo.Message, author *discordgo.Member, mType string) Reaction
 }
 
 var _botReactions map[string]map[string][]BotReaction
@@ -33,13 +45,24 @@ func addReaction(trigger string, mType string, reaction BotReaction) {
 	_botReactions[mType][trigger] = append(_botReactions[mType][trigger], reaction)
 }
 
-func GetReactions(message *discordgo.Message, author *discordgo.Member, mType string) []string {
-	var reactions []string
+func GetReactions(message *discordgo.Message, author *discordgo.Member, mType string, gTrigger string, gTIndex int) []taggedReaction {
+	var reactions []taggedReaction
+
+	if len(gTrigger) > 0 {
+		if _, ok := _botReactions[mType][gTrigger]; ok {
+			reactions = append(reactions, taggedReaction{
+				Trigger: gTrigger,
+				Reaction: _botReactions[mType][gTrigger][gTIndex].Reaction(message, author, mType)},
+			)
+		}
+		return reactions
+	}
+
 	if _, ok := _botReactions[mType]["*"]; ok { // Run wildcard triggers first
 		for _, reaction := range _botReactions[mType]["*"] {
 			if author != nil { // FIXME: This can probably be rephrased to something better
 				if author.GuildID == "" { // This is useful only for eliza at the moment :joy:
-					reactions = append(reactions, reaction.Reaction(message, author, mType))
+					reactions = append(reactions, taggedReaction{Reaction: reaction.Reaction(message, author, mType)})
 				} else {
 					_ = reaction.Reaction(message, author, mType) // Wildcard triggers should not respond on channels
 				}
@@ -58,20 +81,24 @@ func GetReactions(message *discordgo.Message, author *discordgo.Member, mType st
 	}
 
 	if strings.TrimSpace(strings.ToLower(message.Content)) == fmt.Sprintf("%shelp", settings.Settings.Discord.BotPrefix) {
-		reactions = append(reactions, GenHelp(""))
+		reactions = append(reactions, taggedReaction{Reaction: Reaction{Text: GenHelp("")}})
 		return reactions
 	}
 
 	if strings.HasPrefix(strings.ToLower(message.Content), fmt.Sprintf("%shelp", settings.Settings.Discord.BotPrefix)) {
 		helpDetail := strings.TrimSpace(message.Content[len(settings.Settings.Discord.BotPrefix)+4:]) // len("help") -> 4
-		reactions = append(reactions, GenHelp(helpDetail))
+		reactions = append(reactions, taggedReaction{Reaction: Reaction{Text: GenHelp(helpDetail)}})
 		return reactions
 	}
 
 	for trigger, _reactions := range _botReactions[mType] {
 		if strings.HasPrefix(strings.ToLower(message.Content[len(settings.Settings.Discord.BotPrefix):]), strings.ToLower(trigger)) {
-			for _, reaction := range _reactions {
-				reactions = append(reactions, reaction.Reaction(message, author, mType))
+			for tIndex, reaction := range _reactions {
+				reactions = append(reactions, taggedReaction{
+					Trigger: trigger,
+					TriggerIndex: tIndex,
+					Reaction: reaction.Reaction(message, author, mType)},
+				)
 			}
 		}
 	}

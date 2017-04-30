@@ -2,6 +2,7 @@ package bot_reactions
 
 import (
 	"strings"
+	"time"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -18,11 +19,13 @@ func (p *ping) HelpDetail() string {
 	return p.Help()
 }
 
-func (p *ping) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) string {
+func (p *ping) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) Reaction {
 	if strings.Contains(strings.ToLower(m.Content), "pong") {
-		return "Ping!"
+		// return "Ping!"
+		return Reaction{Text: "Ping!"}
 	}
-	return "Pong!"
+	// return "Pong!"
+	return Reaction{Text: "Pong!"}
 }
 
 func init() {
