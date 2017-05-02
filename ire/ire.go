@@ -6,8 +6,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/adayoung/ada-bot/utils/httpclient"
 	"github.com/adayoung/ada-bot/settings"
+	"github.com/adayoung/ada-bot/utils/httpclient"
 )
 
 var APIURL string // This is read and set from config.yaml by main.init()

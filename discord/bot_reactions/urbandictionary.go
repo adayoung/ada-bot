@@ -31,7 +31,7 @@ type urbanDictionaryResult struct {
 	Tags       []string          `json:"tags"`
 	ResultType string            `json:"result_type"`
 	List       []urbanDefinition `json:"list"`
-	sounds     []string          `json:"sounds"`
+	Sounds     []string          `json:"sounds"`
 }
 
 type urbanDefinitionByVote []urbanDefinition  // Implements sort.Interface
