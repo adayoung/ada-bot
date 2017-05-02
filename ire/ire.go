@@ -6,6 +6,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/adayoung/ada-bot/utils/httpclient"
 	"github.com/adayoung/ada-bot/settings"
 )
 
@@ -47,7 +48,7 @@ func (g *Gamefeed) Sync() ([]Event, error) {
 		return deathsights, nil
 	}
 
-	if err := getJSON(url, &g.Events); err == nil {
+	if err := httpclient.GetJSON(url, &g.Events); err == nil {
 		for _, event := range *g.Events {
 			go logEvent(event)
 			if event.ID > g.LastID {
@@ -59,7 +60,7 @@ func (g *Gamefeed) Sync() ([]Event, error) {
 			}
 		}
 	} else {
-		return nil, err // Error at http.Get() call
+		return nil, err // Error at httpclient.GetJSON() call
 	}
 
 	settings.Settings.IRE.LastID = g.LastID
@@ -106,10 +107,10 @@ func GetPlayer(player string) (*Player, error) {
 		if !match {
 			url := fmt.Sprintf("%s/characters/%s.json", APIURL, player)
 			_player := &Player{}
-			if err := getJSON(url, &_player); err == nil {
+			if err := httpclient.GetJSON(url, &_player); err == nil {
 				return _player, nil
 			} else {
-				return nil, err // Error at getJson() call
+				return nil, err // Error at httpclient.GetJson() call
 			}
 		} else {
 			return nil, fmt.Errorf(fmt.Sprintf("Invalid player name supplied: %s", player))
