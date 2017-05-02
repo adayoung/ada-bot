@@ -2,6 +2,7 @@ package bot_reactions
 
 import (
 	"fmt"
+	"log"
 	"net/url"
 	"strings"
 
@@ -26,8 +27,8 @@ func (u *urbanDictionary) HelpDetail() string {
 }
 
 func (u *urbanDictionary) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) Reaction {
-	var response string
 	request := strings.ToLower(strings.TrimSpace(m.Content[len(settings.Settings.Discord.BotPrefix)+len(u.Trigger):]))
+	response := fmt.Sprintf("I couldn't find the meaning of %s :frowning:", request)
 	urlArgs := url.Values{"term": []string{request}}
 	url := fmt.Sprintf("%s?%s", apiURL, urlArgs.Encode())
 
@@ -57,7 +58,7 @@ func (u *urbanDictionary) Reaction(m *discordgo.Message, a *discordgo.Member, mT
 			}
 		}
 	} else {
-		response = fmt.Sprintf("I couldn't find the meaning of %s :frowning:", request)
+		log.Printf("error: %v", err) // Not a fatal error
 	}
 
 	return Reaction{Text: response}
