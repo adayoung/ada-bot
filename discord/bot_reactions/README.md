@@ -9,12 +9,13 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-// A bot reaction implements the following interface
-// type BotReaction interface {
-// 	Help() string
-// 	HelpDetail(*discordgo.Message) string
-// 	Reaction(message *discordgo.Message, author *discordgo.Member) string
-// }
+/* // A bot reaction implements the following interface
+type BotReaction interface {
+	Help() string
+	HelpDetail(*discordgo.Message) string
+	Reaction(message *discordgo.Message, author *discordgo.Member) Reaction
+}
+*/
 
 type Ping struct {  
 	Trigger string
@@ -27,13 +28,14 @@ func (p *Ping) Help() string {
 
 // This is detailed help and it's supposed to be invoked when people do !help <trigger>
 func (p *Ping) HelpDetail() string {
-	return p.Help()
+	return "Ima ping pong ball!"
 }
 
 // The actual reaction, the full message content is available in m.Content
-// The returned string is sent to the channel where the trigger was seen
+// The returned reaction is sent to the channel where the trigger was seen
 func (p *Ping) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) Reaction {
 	// mType can be CREATE, UPDATE, or DELETE (of messages on Discord) at the moment
+	// see bot_reactions.go for the full struct definition of Reaction
 	return Reaction{Text: "Pong!"}
 }
 
