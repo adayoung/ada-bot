@@ -74,7 +74,7 @@ func (u *urbanDictionary) Reaction(m *discordgo.Message, a *discordgo.Member, mT
 			}
 		}
 	} else {
-		log.Printf("error: %v", err) // Non fatal error at httpclient.GetJson() call
+		log.Printf("error: %v", err) // Non fatal error at httpclient.GetJSON() call
 	}
 
 	return Reaction{Text: response}

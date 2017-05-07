@@ -5,6 +5,7 @@ import (
 	"net/http"
 )
 
+// Get issues the standard http.Get request but with a custom User-Agent header
 func Get(url string) (*http.Response, error) {
 	client := &http.Client{}
 	var data bytes.Buffer

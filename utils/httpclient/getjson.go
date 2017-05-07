@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 )
 
+// GetJSON combines fetching and decoding JSON from the supplied url
 func GetJSON(url string, v interface{}) error {
 	if response, err := Get(url); err == nil {
 		defer response.Body.Close() // So _this_ is why we had #19? I dunno :o
