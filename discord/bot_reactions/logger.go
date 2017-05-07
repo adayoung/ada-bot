@@ -10,19 +10,19 @@ import (
 	"github.com/adayoung/ada-bot/utils/storage"
 )
 
-type Logger struct {
+type logger struct {
 	Trigger string
 }
 
-func (l *Logger) Help() string {
+func (l *logger) Help() string {
 	return ""
 }
 
-func (l *Logger) HelpDetail() string {
+func (l *logger) HelpDetail() string {
 	return l.Help()
 }
 
-func (l *Logger) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) Reaction {
+func (l *logger) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) Reaction {
 	saveMessage(m, a, mType)
 	return Reaction{Text: ""} // We don't talk, we just listen -sagenod-
 }
@@ -30,12 +30,12 @@ func (l *Logger) Reaction(m *discordgo.Message, a *discordgo.Member, mType strin
 func init() {
 	storage.OnReady(initDB)
 
-	logger := &Logger{
+	_logger := &logger{
 		Trigger: "*",
 	}
-	addReaction(logger.Trigger, "CREATE", logger)
-	addReaction(logger.Trigger, "UPDATE", logger)
-	addReaction(logger.Trigger, "DELETE", logger)
+	addReaction(_logger.Trigger, "CREATE", _logger)
+	addReaction(_logger.Trigger, "UPDATE", _logger)
+	addReaction(_logger.Trigger, "DELETE", _logger)
 }
 
 var initDBComplete bool = false

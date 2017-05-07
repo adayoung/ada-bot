@@ -13,14 +13,15 @@ import (
 	"github.com/adayoung/ada-bot/settings"
 )
 
-var BotID string // Set by InitDiscordSession
+// BotID is set by InitDiscordSession for subsequent use in reactions dispatcher
+var BotID string
 var dg *discordgo.Session
 
 func init() {
 	rand.Seed(time.Now().Unix())
 }
 
-// Create a new Discord session using the provided login information.
+// InitDiscordSession creates a new Discord session using the provided login information.
 func InitDiscordSession(token string, qLength int, waitMs string) error {
 	var err error
 	if dg, err = discordgo.New(fmt.Sprintf("Bot %s", token)); err == nil {
@@ -54,7 +55,7 @@ func InitDiscordSession(token string, qLength int, waitMs string) error {
 	return nil
 }
 
-// Queue a message for posting via Discord API, takes channelID and message
+// PostMessage queues a message for posting via Discord API, takes channelID and message
 func PostMessage(c string, m string) {
 	if len(m) > 0 {
 		mq := message{ChannelID: c, Message: m}
@@ -62,7 +63,7 @@ func PostMessage(c string, m string) {
 	}
 }
 
-// Close Discord Gateway websocket on exit
+// CloseDiscordSession closes Discord Gateway websocket, to be used on exit
 func CloseDiscordSession() {
 	dg.Close()
 }

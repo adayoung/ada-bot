@@ -1,4 +1,4 @@
-// Package settings: this should be importable by everything under the project
+// Package settings provides a way to save and load runtime settings
 package settings
 
 import (
@@ -21,9 +21,11 @@ type settings struct {
 }
 
 var settingsPath string
-var Settings settings // runtime settings
 
-// Called by main() once config.yaml is read/processed
+// Settings - runtime settings
+var Settings settings
+
+// Init is called by main() once config.yaml is read/processed
 func Init(path string) error {
 	settingsPath = path
 	if err := Settings.Load(); err != nil {

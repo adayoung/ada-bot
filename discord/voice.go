@@ -8,6 +8,7 @@ import (
 
 var vc *discordgo.VoiceConnection
 
+// JoinVoice makes the bot join a voice channel with the supplied ID
 func JoinVoice(gID, cID string) {
 	var err error
 	if vc, err = dg.ChannelVoiceJoin(gID, cID, true, true); err != nil {
@@ -15,6 +16,7 @@ func JoinVoice(gID, cID string) {
 	}
 }
 
+// LeaveVoice makes the bot leave the voice channel
 func LeaveVoice() {
 	if vc != nil {
 		if err := vc.Disconnect(); err != nil {

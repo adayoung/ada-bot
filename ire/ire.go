@@ -10,9 +10,10 @@ import (
 	"github.com/adayoung/ada-bot/utils/httpclient"
 )
 
-var APIURL string // This is read and set from config.yaml by main.init()
+// APIURL is read and set from config.yaml by main.init()
+var APIURL string
 
-// Represents a single event per IRE's gamefeed
+// Event represents a single event per IRE's gamefeed
 type Event struct {
 	ID          int    `json:"id"`
 	Caption     string `json:"caption"`
@@ -34,7 +35,7 @@ func (d eventsByDate) Less(i, j int) bool {
 	return d[i].Date < d[j].Date
 }
 
-// Get the latest events from API endpoint, returns deathsights
+// Sync gets the latest events from API endpoint, returns deathsights
 func (g *Gamefeed) Sync() ([]Event, error) {
 	url := fmt.Sprintf("%s/gamefeed.json", APIURL)
 	g.LastID = settings.Settings.IRE.LastID
@@ -68,7 +69,7 @@ func (g *Gamefeed) Sync() ([]Event, error) {
 	return deathsights, nil
 }
 
-// Represents a player per IRE's API
+// Player represents a player per IRE's API
 type Player struct {
 	Name         string `json:"name"`
 	Fullname     string `json:"fullname"`
@@ -98,7 +99,7 @@ Rank (Explorer): %s`,
 	return player
 }
 
-// Lookup and retrieve a player from IRE's API
+// GetPlayer performs a lookup and retrieve a player from IRE's API
 func GetPlayer(player string) (*Player, error) {
 	if !(len(player) > 0) {
 		return nil, fmt.Errorf(fmt.Sprintf("Invalid player name supplied: %s", player))

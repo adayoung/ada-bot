@@ -13,6 +13,7 @@ import (
 	"github.com/adayoung/ada-bot/settings"
 )
 
+// Reaction represents the bot's reaction on a given trigger string, a non-nil Timer can be used for delayed (re)execution
 type Reaction struct {
 	Timer *time.Duration
 	Text  string
@@ -24,6 +25,7 @@ type taggedReaction struct {
 	Reaction
 }
 
+// BotReaction interface is expected by the dispatcher to process message triggers
 type BotReaction interface {
 	Help() string
 	HelpDetail() string
@@ -45,6 +47,7 @@ func addReaction(trigger string, mType string, reaction BotReaction) {
 	_botReactions[mType][trigger] = append(_botReactions[mType][trigger], reaction)
 }
 
+// GetReactions gets all bot reactions for the supplied message
 func GetReactions(message *discordgo.Message, author *discordgo.Member, mType string, gTrigger string, gTIndex int) []taggedReaction {
 	var reactions []taggedReaction
 
@@ -106,6 +109,7 @@ func GetReactions(message *discordgo.Message, author *discordgo.Member, mType st
 	return reactions
 }
 
+// GenHelp generates help text for all defined bot reactions
 func GenHelp(helpDetail string) string {
 	w := &tabwriter.Writer{}
 	buf := &bytes.Buffer{}

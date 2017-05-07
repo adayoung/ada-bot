@@ -8,7 +8,7 @@ import (
 // DB is exported for use in sub-packages
 var DB *sqlx.DB
 
-// Called from main(), sets up DB and checks for connectivity
+// InitDB is called from main(), to set up DB and check for connectivity
 func InitDB(connString string) error {
 	var err error
 	if DB, err = sqlx.Open("postgres", connString); err == nil {
@@ -25,7 +25,7 @@ func InitDB(connString string) error {
 
 var onReady []func() = []func(){}
 
-// storage.OnReady allows sub-packages to queue their own init() sequentially
+// OnReady allows sub-packages to queue their own init() once we have a DB up
 func OnReady(initdb func()) {
 	onReady = append(onReady, initdb)
 }
