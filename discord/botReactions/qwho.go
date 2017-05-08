@@ -5,9 +5,11 @@ import (
 	"log"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/bwmarrin/discordgo"
 
+	"github.com/adayoung/ada-bot/settings"
 	"github.com/adayoung/ada-bot/utils/httpclient"
 )
 
@@ -40,9 +42,23 @@ func (q *qwhoTrigger) HelpDetail() string {
 	return q.Help()
 }
 
+var qWhoLast = time.Now().AddDate(0, 0, -1)
+
 func (q *qwhoTrigger) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) Reaction {
-	response := "```"
+	/* begin rate limit qwho */
+	timeNow := time.Now()
+	if timeNow.Sub(qWhoLast) < time.Second*60 {
+		return Reaction{Text: fmt.Sprintf("Oops, %s%s is rate limited to once per minute only :shrug:",
+			settings.Settings.Discord.BotPrefix,
+			q.Trigger,
+		)}
+	} else {
+		qWhoLast = timeNow
+	}
+	/* end rate limit qwho */
+
 	url := "http://api.achaea.com/characters.json"
+	response := "```"
 
 	var _results qwho
 	var characters []string
