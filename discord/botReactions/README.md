@@ -3,7 +3,7 @@
 Hi! It's easy to implement simple bot reactions! We have a lovely dispatcher to take care of the gory details as long as your code conforms to the following example:
 
 ```Go
-package bot_reactions
+package botReactions
 
 import (
 	"github.com/bwmarrin/discordgo"
@@ -17,34 +17,34 @@ type BotReaction interface {
 }
 */
 
-type Ping struct {  
+type ping struct {  
 	Trigger string
 }
 
 // This should be a single line without \n breaks, it appears in !help
-func (p *Ping) Help() string {
+func (p *ping) Help() string {
 	return "Pong!"
 }
 
 // This is detailed help and it's supposed to be invoked when people do !help <trigger>
-func (p *Ping) HelpDetail() string {
+func (p *ping) HelpDetail() string {
 	return "Ima ping pong ball!"
 }
 
 // The actual reaction, the full message content is available in m.Content
 // The returned reaction is sent to the channel where the trigger was seen
-func (p *Ping) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) Reaction {
+func (p *ping) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) Reaction {
 	// mType can be CREATE, UPDATE, or DELETE (of messages on Discord) at the moment
-	// see bot_reactions.go for the full struct definition of Reaction
+	// see botReactions.go for the full struct definition of Reaction
 	return Reaction{Text: "Pong!"}
 }
 
 // Here's where you add your 'trigger' and register your reaction with the dispatcher
 func init() {
-	ping := &Ping{
+	_ping := &ping{
 		Trigger: "ping", // Yes, it's "ping" and NOT "!ping".
 	}
-	addReaction(ping.Trigger, "CREATE", ping) // the second argument is mType
+	addReaction(_ping.Trigger, "CREATE", _ping) // the second argument is mType
 }
 ```
 
