@@ -1,4 +1,4 @@
-package bot_reactions
+package botReactions
 
 import (
 	"fmt"
@@ -12,8 +12,6 @@ import (
 	"github.com/adayoung/ada-bot/settings"
 	"github.com/adayoung/ada-bot/utils/httpclient"
 )
-
-var apiURL string = "http://api.urbandictionary.com/v0/define"
 
 type urbanDefinition struct {
 	Definition  string `json:"definition"`
@@ -54,6 +52,7 @@ func (u *urbanDictionary) HelpDetail() string {
 }
 
 func (u *urbanDictionary) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) Reaction {
+	apiURL := "http://api.urbandictionary.com/v0/define"
 	request := strings.ToLower(strings.TrimSpace(m.Content[len(settings.Settings.Discord.BotPrefix)+len(u.Trigger):]))
 	response := fmt.Sprintf("I couldn't find the meaning of %s :frowning:", request)
 	urlArgs := url.Values{"term": []string{request}}

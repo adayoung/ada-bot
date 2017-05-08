@@ -9,7 +9,7 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 
-	"github.com/adayoung/ada-bot/discord/bot_reactions"
+	"github.com/adayoung/ada-bot/discord/botReactions"
 	"github.com/adayoung/ada-bot/settings"
 )
 
@@ -146,10 +146,10 @@ func _botReactions(s *discordgo.Session, m *discordgo.Message, mType string) {
 }
 
 func _postReactions(m *discordgo.Message, member *discordgo.Member, mType string) {
-	for _, reaction := range bot_reactions.GetReactions(m, member, mType, "", 0) {
+	for _, reaction := range botReactions.GetReactions(m, member, mType, "", 0) {
 		if reaction.Timer != nil {
 			time.AfterFunc(*reaction.Timer, func() {
-				for _, reaction := range bot_reactions.GetReactions(m, member, mType, reaction.Trigger, reaction.TriggerIndex) {
+				for _, reaction := range botReactions.GetReactions(m, member, mType, reaction.Trigger, reaction.TriggerIndex) {
 					PostMessage(m.ChannelID, reaction.Text)
 				}
 			})

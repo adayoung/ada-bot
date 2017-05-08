@@ -1,4 +1,4 @@
-package bot_reactions
+package botReactions
 
 import (
 	"bytes"

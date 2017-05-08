@@ -2,7 +2,7 @@
 // This applies: https://github.com/iopred/bruxism/blob/master/LICENSE
 // Thanks to Mister Christopher Rhodes for this! :D
 
-package bot_reactions
+package botReactions
 
 import (
 	"bytes"
