@@ -46,11 +46,24 @@ var qWhoLast = time.Now().AddDate(0, 0, -1)
 
 func (q *qwhoTrigger) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) Reaction {
 	/* begin rate limit qwho */
+	lastUsedBy := "Unknown"
+	if a != nil {
+		if a.Nick != "" {
+			lastUsedBy = a.Nick
+		} else {
+			if a.User != nil {
+				lastUsedBy = a.User.Username
+			}
+		}
+	}
+
 	timeNow := time.Now()
 	if timeNow.Sub(qWhoLast) < time.Second*60 {
-		return Reaction{Text: fmt.Sprintf("Oops, %s%s is rate limited to once per minute only :shrug:",
+		return Reaction{Text: fmt.Sprintf("Oops, %s%s is rate limited to once per minute only :shrug:\nLast used by %s at %s",
 			settings.Settings.Discord.BotPrefix,
 			q.Trigger,
+			lastUsedBy,
+			qWhoLast.Format("Monday, Jan _2, 2006"),
 		)}
 	} else {
 		qWhoLast = timeNow
