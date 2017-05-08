@@ -63,7 +63,7 @@ func (q *qwhoTrigger) Reaction(m *discordgo.Message, a *discordgo.Member, mType 
 			settings.Settings.Discord.BotPrefix,
 			q.Trigger,
 			lastUsedBy,
-			qWhoLast.Format("Monday, Jan _2, 2006"),
+			qWhoLast.Format("15:04:05 -0700 MST"),
 		)}
 	} else {
 		qWhoLast = timeNow
