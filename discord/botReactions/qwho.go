@@ -5,6 +5,7 @@ import (
 	"log"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
@@ -32,6 +33,10 @@ func (q charactersByName) Less(i, j int) bool {
 
 type qwhoTrigger struct {
 	Trigger string
+
+	sync.RWMutex
+	qWhoLast       time.Time
+	qWhoLastUsedBy string
 }
 
 func (q *qwhoTrigger) Help() string {
@@ -42,32 +47,32 @@ func (q *qwhoTrigger) HelpDetail() string {
 	return q.Help()
 }
 
-var _qWhoLast = time.Now().AddDate(0, 0, -1)
-var _qWhoLastUsedBy = "Unknown"
-
 func (q *qwhoTrigger) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) Reaction {
+	q.Lock() // This, because we're maintaining state in the trigger itself
+	defer q.Unlock()
+
 	/* begin rate limit qwho */
 	timeNow := time.Now()
-	if timeNow.Sub(_qWhoLast) < time.Second*60 {
+	if timeNow.Sub(q.qWhoLast) < time.Second*60 {
 		return Reaction{Text: fmt.Sprintf("Oops, %s%s is rate limited to once per minute only :shrug:\nLast used by %s at %s",
 			settings.Settings.Discord.BotPrefix,
 			q.Trigger,
-			_qWhoLastUsedBy,
-			_qWhoLast.Format("15:04:05 -0700 MST"),
+			q.qWhoLastUsedBy,
+			q.qWhoLast.Format("15:04:05 -0700 MST"),
 		)}
 	} else {
-		_qWhoLast = timeNow
+		q.qWhoLast = timeNow
 		if a != nil {
 			if a.Nick != "" {
-				_qWhoLastUsedBy = a.Nick
+				q.qWhoLastUsedBy = a.Nick
 			} else {
 				if a.User != nil {
-					_qWhoLastUsedBy = a.User.Username
+					q.qWhoLastUsedBy = a.User.Username
 				}
 			}
 		} else {
 			if m.Author != nil {
-				_qWhoLastUsedBy = m.Author.Username
+				q.qWhoLastUsedBy = m.Author.Username
 			}
 		}
 	}
@@ -98,4 +103,7 @@ func init() {
 		Trigger: "qwho",
 	}
 	addReaction(_qwho.Trigger, "CREATE", _qwho)
+
+	_qwho.qWhoLast = time.Now().AddDate(0, 0, -1)
+	_qwho.qWhoLastUsedBy = "Unknown"
 }
