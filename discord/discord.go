@@ -33,6 +33,7 @@ func InitDiscordSession(token string, qLength int, waitMs string) error {
 			dg.AddHandler(messageCreate)
 			dg.AddHandler(messageUpdate)
 			dg.AddHandler(messageDelete)
+			dg.AddHandler(guildMemberAdd)
 			if err := dg.Open(); err == nil {
 				fmt.Println("Successfully launched a new Discord session.")
 			} else {
@@ -136,7 +137,7 @@ func _botReactions(s *discordgo.Session, m *discordgo.Message, mType string) {
 				} else if strings.HasPrefix(m.Content, "!leave") {
 					LeaveVoice()
 				} else if strings.HasPrefix(m.Content, "!setrole") {
-					setRole(s, m, guildID, strings.TrimSpace(m.Content[8:]))
+					setRole(s, m, guildID, strings.TrimSpace(m.Content[8:]), nil)
 				}
 			}
 		}
