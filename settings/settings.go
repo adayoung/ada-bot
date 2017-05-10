@@ -10,8 +10,9 @@ import (
 
 type settings struct {
 	Discord struct {
-		BotPrefix string
-		BotAdmin  string
+		BotPrefix    string
+		BotAdmin     string
+		DefaultRoles map[string]string
 	}
 
 	IRE struct {
@@ -27,6 +28,8 @@ var Settings settings
 
 // Init is called by main() once config.yaml is read/processed
 func Init(path string) error {
+	Settings.Discord.DefaultRoles = make(map[string]string) // ??
+
 	settingsPath = path
 	if err := Settings.Load(); err != nil {
 		return err // Error at Settings.Load() call
