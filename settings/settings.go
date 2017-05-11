@@ -10,7 +10,7 @@ import (
 )
 
 type settings struct {
-	sync.RWMutex
+	sync.RWMutex `yaml:"-"`
 
 	Discord struct {
 		BotPrefix    string
