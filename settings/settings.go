@@ -4,11 +4,14 @@ package settings
 import (
 	"io/ioutil"
 	"os"
+	"sync"
 
 	"gopkg.in/yaml.v2"
 )
 
 type settings struct {
+	sync.RWMutex
+
 	Discord struct {
 		BotPrefix    string
 		BotAdmin     string
@@ -23,7 +26,7 @@ type settings struct {
 
 var settingsPath string
 
-// Settings - runtime settings
+// Settings - runtime settings, ensure Lock() -> defer Unlock() on write
 var Settings settings
 
 // Init is called by main() once config.yaml is read/processed
@@ -31,10 +34,7 @@ func Init(path string) error {
 	Settings.Discord.DefaultRoles = make(map[string]string) // ??
 
 	settingsPath = path
-	if err := Settings.Load(); err != nil {
-		return err // Error at Settings.Load() call
-	}
-	return nil
+	return Settings.Load()
 }
 
 func (s *settings) Load() error {

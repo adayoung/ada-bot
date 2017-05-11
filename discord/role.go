@@ -45,6 +45,8 @@ func setRole(s *discordgo.Session, m *discordgo.Message, guildID string, roleNam
 				}
 			}
 			// 3. Make that role persistent for this guild
+			settings.Settings.Lock()
+			defer settings.Settings.Unlock()
 			settings.Settings.Discord.DefaultRoles[guild.ID] = roleName
 			settings.Settings.Save()
 		} else {

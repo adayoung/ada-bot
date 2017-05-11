@@ -64,6 +64,8 @@ func (g *Gamefeed) Sync() ([]Event, error) {
 		return nil, err // Error at httpclient.GetJSON() call
 	}
 
+	settings.Settings.Lock()
+	defer settings.Settings.Unlock()
 	settings.Settings.IRE.LastID = g.LastID
 	sort.Sort(eventsByDate(deathsights))
 	return deathsights, nil
