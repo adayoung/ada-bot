@@ -13,7 +13,7 @@ func InitDB(connString string) error {
 	var err error
 	if DB, err = sqlx.Open("postgres", connString); err == nil {
 		if err := DB.Ping(); err == nil {
-			_onReady() // launch functions dependant on DBs readiness
+			go _onReady() // launch functions dependant on DBs readiness
 		} else {
 			return err // Error at DB.Ping() call
 		}
@@ -23,15 +23,17 @@ func InitDB(connString string) error {
 	return nil
 }
 
-var onReady []func() = []func(){}
+var onReady = make(chan func())
 
 // OnReady allows sub-packages to queue their own init() once we have a DB up
 func OnReady(initdb func()) {
-	onReady = append(onReady, initdb)
+	go func() { // goroutines launched here will stay blocked till _onReady fires
+		onReady <- initdb
+	}()
 }
 
 func _onReady() {
-	for _, fn := range onReady {
+	for fn := range onReady {
 		go fn() // launch functions dependant on DBs readiness
 	}
 }
