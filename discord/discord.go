@@ -70,7 +70,7 @@ func CloseDiscordSession() {
 }
 
 func ready(s *discordgo.Session, r *discordgo.Ready) {
-	if guilds, err := s.UserGuilds(); err != nil {
+	if guilds, err := s.UserGuilds(100, "", ""); err != nil {
 		fmt.Println("ERROR: We couldn't get UserGuilds")
 		log.Fatalf("error: %v", err)
 	} else {
