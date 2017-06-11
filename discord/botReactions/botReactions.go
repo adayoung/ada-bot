@@ -32,11 +32,7 @@ type BotReaction interface {
 	Reaction(message *discordgo.Message, author *discordgo.Member, mType string) Reaction
 }
 
-var _botReactions map[string]map[string][]BotReaction
-
-func init() {
-	_botReactions = make(map[string]map[string][]BotReaction)
-}
+var _botReactions = make(map[string]map[string][]BotReaction)
 
 func addReaction(trigger string, mType string, reaction BotReaction) {
 	// FIXME: calls to addReaction should be idempotent, let's
