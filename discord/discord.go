@@ -109,6 +109,8 @@ func _botReactions(s *discordgo.Session, m *discordgo.Message, mType string) {
 		if m.Author.ID == BotID { // ignore the bot's own messages from processing
 			return
 		}
+	} else {
+		return // let's not bother with a message without an Author!@
 	}
 
 	if channel, err := s.State.Channel(m.ChannelID); err == nil {
