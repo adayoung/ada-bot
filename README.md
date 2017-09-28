@@ -26,3 +26,8 @@ Hi! This is ada-bot, a robot for Achaea's Discord channel. It's very basic at th
 ## IRE Event Logging
 
  * The bot is capable of logging events received from IRE's gamefeed, it'll require an account with a PostgreSQL server with credentials noted in config.yaml
+
+## Building with Docker
+Use the following command to build with the latest version of Go:  
+ * `cd <path to repository>`
+ * `docker run --rm -v $PWD:/usr/src/ada-bot -w /usr/src/ada-bot -v $GOPATH:/go -e "CGO_ENABLED=0" golang:latest go build -v`
