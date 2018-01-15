@@ -12,7 +12,7 @@ var vc *discordgo.VoiceConnection
 func JoinVoice(gID, cID string) {
 	var err error
 	if vc, err = dg.ChannelVoiceJoin(gID, cID, true, true); err != nil {
-		log.Printf("warning: %v", err) // Not a fatal error
+		log.Printf("warning: discordgo.Session.ChannelVoiceJoin: %v", err) // Not a fatal error
 	}
 }
 
@@ -20,7 +20,7 @@ func JoinVoice(gID, cID string) {
 func LeaveVoice() {
 	if vc != nil {
 		if err := vc.Disconnect(); err != nil {
-			log.Printf("warning: %v", err) // Not a fatal error
+			log.Printf("warning: discordgo.VoiceConnection.Disconnect: %v", err) // Not a fatal error
 		}
 	}
 }

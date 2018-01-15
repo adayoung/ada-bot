@@ -84,7 +84,7 @@ func ready(s *discordgo.Session, r *discordgo.Ready) {
 		fmt.Println("----------------------------------")
 	}
 	if err := s.UpdateStatus(0, "play.achaea.com"); err != nil {
-		log.Printf("warning: %v", err) // Not a fatal error
+		log.Printf("warning: discordgo.Session.UpdateStatus: %v", err) // Not a fatal error
 	}
 }
 
@@ -127,7 +127,7 @@ func _botReactions(s *discordgo.Session, m *discordgo.Message, mType string) {
 		if m.Author != nil {
 			if member, err = s.State.Member(guildID, m.Author.ID); err != nil {
 				member = nil
-				log.Printf("warning: %v", err) // Non-fatal error at s.State.Member() call
+				log.Printf("warning: discordgo.Session.State.Member: %v", err) // Non-fatal error at s.State.Member() call
 			}
 
 			if m.Author.ID == settings.Settings.Discord.BotAdmin {
@@ -146,7 +146,7 @@ func _botReactions(s *discordgo.Session, m *discordgo.Message, mType string) {
 		_postReactions(m, member, mType)
 
 	} else {
-		log.Printf("warning: %v", err) // Non-fatal error at s.State.Channel() call
+		log.Printf("warning: discordgo.Session.State.Channel: %v", err) // Non-fatal error at s.State.Channel() call
 	}
 }
 
