@@ -28,6 +28,10 @@ func (r *randomQ) HelpDetail() string {
 var userRegexp *regexp.Regexp = regexp.MustCompile("<@!?([0-9]+)>")
 
 func (r *randomQ) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) Reaction {
+	if a == nil {
+		return Reaction{Text: "Meep! Error :frowning:"}
+	}
+
 	var response string
 	if a.GuildID == "" {
 		response = fmt.Sprintf("Oops, %srandom is not available on direct messages :ghost:", settings.Settings.Discord.BotPrefix)
