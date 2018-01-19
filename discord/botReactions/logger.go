@@ -76,12 +76,14 @@ func saveMessage(m *discordgo.Message, member *discordgo.Member, mType string) {
 	var _guildID string
 
 	if m.Author != nil {
-		if member.GuildID != "" {
-			_guildID = member.GuildID
-			if member.Nick != "" {
-				_member = member.Nick
-			} else {
-				_member = member.User.Username
+		if member != nil {
+			if member.GuildID != "" {
+				_guildID = member.GuildID
+				if member.Nick != "" {
+					_member = member.Nick
+				} else {
+					_member = member.User.Username
+				}
 			}
 		} else {
 			_member = m.Author.Username
