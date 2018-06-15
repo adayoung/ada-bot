@@ -39,14 +39,14 @@ func (r *randomQ) Reaction(m *discordgo.Message, a *discordgo.Member, mType stri
 	}
 
 	if m.Content == fmt.Sprintf("%s%s", settings.Settings.Discord.BotPrefix, r.Trigger) {
-		response = getRandomQuote(a.GuildID, nil, nil)
+		response = getRandomQuote(a.GuildID, nil, nil, m.ChannelID)
 	} else {
 		request := strings.TrimSpace(m.Content[len(settings.Settings.Discord.BotPrefix)+len(r.Trigger):])
 		userID := userRegexp.FindStringSubmatch(request)
 		if userID != nil {
-			response = getRandomQuote(a.GuildID, &userID[1], nil)
+			response = getRandomQuote(a.GuildID, &userID[1], nil, m.ChannelID)
 		} else {
-			response = getRandomQuote(a.GuildID, nil, &request)
+			response = getRandomQuote(a.GuildID, nil, &request, m.ChannelID)
 		}
 	}
 	return Reaction{Text: response}
@@ -59,8 +59,8 @@ func init() {
 	addReaction(_randomq.Trigger, "CREATE", _randomq)
 }
 
-func getRandomQuote(guildID string, user *string, member *string) string {
-	query := "SELECT member, content, channel_id, timestamp from discord_messages WHERE guild_id=?"
+func getRandomQuote(guildID string, user *string, member *string, fromChannelID string) string {
+	query := "SELECT member, content, channel_id, timestamp from discord_messages WHERE guild_id=? AND channel_id=?"
 	if user != nil {
 		query = fmt.Sprintf("%s AND user_id=?", query)
 	} else if member != nil {
@@ -79,17 +79,17 @@ func getRandomQuote(guildID string, user *string, member *string) string {
 	var result bool = true
 
 	if user != nil {
-		if err := storage.DB.QueryRow(query, guildID, user).Scan(&userID, &content, &channelID, &timestamp); err != nil {
+		if err := storage.DB.QueryRow(query, guildID, fromChannelID, user).Scan(&userID, &content, &channelID, &timestamp); err != nil {
 			result = false
 			log.Printf("error: %v", err) // Error with ... something
 		}
 	} else if member != nil {
-		if err := storage.DB.QueryRow(query, guildID, member).Scan(&userID, &content, &channelID, &timestamp); err != nil {
+		if err := storage.DB.QueryRow(query, guildID, fromChannelID, member).Scan(&userID, &content, &channelID, &timestamp); err != nil {
 			result = false
 			log.Printf("error: %v", err) // Error with ... something
 		}
 	} else {
-		if err := storage.DB.QueryRow(query, guildID).Scan(&userID, &content, &channelID, &timestamp); err != nil {
+		if err := storage.DB.QueryRow(query, guildID, fromChannelID).Scan(&userID, &content, &channelID, &timestamp); err != nil {
 			result = false
 			log.Printf("error: %v", err) // Error with ... something
 		}
