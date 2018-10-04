@@ -89,7 +89,8 @@ func (q *qwhoTrigger) Reaction(m *discordgo.Message, a *discordgo.Member, mType 
 			characters = append(characters, character.Name)
 		}
 		response = fmt.Sprintf("%sPlayers: %s", response, strings.Join(characters, ", "))
-		response = fmt.Sprintf("%s\nTotal: %s", response, _results.Count)
+		response = fmt.Sprintf("%s\nVisible: %s", response, _results.Characters)
+		response = fmt.Sprintf("%s\nTotal: %s", response, len(_results.Count))
 	} else {
 		log.Printf("error: %v", err) // Non fatal error at httpclient.GetJSON() call
 	}
