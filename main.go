@@ -40,7 +40,7 @@ var _config config
 
 func init() {
 	if data, err := ioutil.ReadFile("config.yaml"); err == nil {
-		if err := yaml.Unmarshal([]byte(data), &_config); err == nil {
+		if err = yaml.Unmarshal([]byte(data), &_config); err == nil {
 			ire.APIURL = _config.IronRealms.APIURL
 		} else {
 			log.Println("ERROR: Error with parsing config.yaml.")

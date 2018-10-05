@@ -26,15 +26,15 @@ func setRole(s *discordgo.Session, m *discordgo.Message, guildID string, roleNam
 			if guild.Members != nil {
 				gRoleCounter := 0
 				if user != nil {
-					if err := s.GuildMemberRoleAdd(guild.ID, user.ID, roleID); err != nil {
+					if err = s.GuildMemberRoleAdd(guild.ID, user.ID, roleID); err != nil {
 						log.Printf("warning: discordgo.Session.GuildMemberRoleAdd: %v", err) // Non-fatal error at s.GuildMemberRoleAdd() call
 					}
 					return
 				}
 				for _, gMember := range guild.Members {
 					if gMember.User != nil {
-						if err := s.GuildMemberRoleAdd(guild.ID, gMember.User.ID, roleID); err == nil {
-							gRoleCounter += 1
+						if err = s.GuildMemberRoleAdd(guild.ID, gMember.User.ID, roleID); err == nil {
+							gRoleCounter++
 						} else {
 							log.Printf("warning: discordgo.Session.GuildMemberRoleAdd: %v", err) // Non-fatal error at s.GuildMemberRoleAdd() call
 						}

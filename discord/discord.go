@@ -34,7 +34,7 @@ func InitDiscordSession(token string, qLength int, waitMs string) error {
 			dg.AddHandler(messageUpdate)
 			dg.AddHandler(messageDelete)
 			dg.AddHandler(guildMemberAdd)
-			if err := dg.Open(); err == nil {
+			if err = dg.Open(); err == nil {
 				fmt.Println("Successfully launched a new Discord session.")
 			} else {
 				return err // Error at opening Discord Session
@@ -122,7 +122,6 @@ func _botReactions(s *discordgo.Session, m *discordgo.Message, mType string) {
 			return
 		}
 
-		var err error
 		var member *discordgo.Member
 		if m.Author != nil {
 			if member, err = s.State.Member(guildID, m.Author.ID); err != nil {
