@@ -21,6 +21,9 @@ type settings struct {
 	IRE struct {
 		DeathsightEnabled bool
 		LastID            int
+
+		OrgLogsEnabled bool
+		LastOrgLog     int
 	}
 }
 
@@ -52,6 +55,8 @@ func (s *settings) Load() error {
 		Settings.Discord.BotAdmin = "0"
 		Settings.IRE.DeathsightEnabled = true
 		Settings.IRE.LastID = 0
+		Settings.IRE.OrgLogsEnabled = true
+		Settings.IRE.LastOrgLog = 0
 		/* ----------- END DEFAULT SETTINGS -----------*/
 		if err := Settings.Save(); err != nil {
 			return err // Error at Settings.Save() call
