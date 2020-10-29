@@ -7,6 +7,7 @@ Hi! This is ada-bot, a robot for Achaea's Discord channel. It's very basic at th
 ## How to use
 
  * Create an App on [Discord API](https://discordapp.com/developers/applications/me) and add a Bot user to it.
+ * Make sure to enable Privileged Gateway Intents for your bot, we need both, Presence and Server Membership.
  * Install the package with `go get github.com/adayoung/ada-bot`
  * Copy the file `config.yaml` from the src somewhere
  * Copy the Bot's Authorization token and put it in config.yaml
