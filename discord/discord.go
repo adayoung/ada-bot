@@ -34,6 +34,7 @@ func InitDiscordSession(token string, qLength int, waitMs string) error {
 			dg.AddHandler(messageUpdate)
 			dg.AddHandler(messageDelete)
 			dg.AddHandler(guildMemberAdd)
+			dg.Identify.Intents = discordgo.MakeIntent(discordgo.IntentsAll)
 			if err = dg.Open(); err == nil {
 				fmt.Println("Successfully launched a new Discord session.")
 			} else {
