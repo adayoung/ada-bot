@@ -1,16 +1,20 @@
 discord:
-  botkey:
-  channel:
+  botkey: "Paste the Bot User's token from https://discordapp.com/developers/applications/me here"
+  channel: "Paste the Channel's ID here on which would be the default relay for messages/deathsight!"
   qlength: 64
   waitms: "500ms"
 
 ironrealms:
   apiurl: "https://api.achaea.com"
-  character:
-  password:
+  character: "The character you want to use to fetch orglogs goes here!"
+  password: "The password for that character, use simple alphanumeric, special characters tend to mess it up!"
   defencechannels:
+    - "defenceChannel_1 - Channel ID for announcing sanctioned raid on our city!"
+    - "defenceChannel_2 - Channel ID for announcing sanctioned raid on our city!"
   offencechannels:
-  citychannel:
+    - "offenseChannelID_1 - Channel ID for announcing sanctioned raid on enemy city!"
+    - "offenseChannelID_2 - Channel ID for announcing sanctioned raid on enemy city!"
+  citychannel: "Channel ID for our city's orglog!"
 
 database:
   connection: "user=ada password=ada dbname=ada-bot sslmode=disable"
