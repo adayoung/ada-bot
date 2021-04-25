@@ -121,7 +121,8 @@ func main() {
 					if strings.HasSuffix(event.Event, "has declared a sanctioned raid against the City") ||
 						strings.Contains(event.Event, " slew ") ||
 						strings.Contains(event.Event, " has disarmed a hostile tank.") ||
-						strings.HasSuffix(event.Event, "has withdrawn from the City, ending the sanctioned raid") {
+						strings.HasSuffix(event.Event, "has withdrawn from the City, ending the sanctioned raid") ||
+						strings.HasSuffix(event.Event, "have declared their intent to retaliate against our previous conquests") {
 						for _, channel := range _config.IronRealms.DefenceChannels {
 							discord.PostMessage(channel, fmt.Sprintf("```%s - %s```", event.RealDate, event.Event))
 						}
