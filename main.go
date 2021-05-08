@@ -20,7 +20,7 @@ import (
 type config struct {
 	Discord struct {
 		BotKey  string
-		Channel string
+		Channel []string
 		QLength int
 		WaitMS  string
 	}
@@ -88,13 +88,17 @@ func main() {
 
 	IRE := ire.Gamefeed{}
 
-	discord.PostMessage(_config.Discord.Channel, "```---------- ada-bot restarting ... ----------```")
+	for _, channel := range _config.Discord.Channel {
+		discord.PostMessage(channel, "```---------- ada-bot restarting ... ----------```")
+	}
 	ticker := time.NewTicker(time.Millisecond * 30000) // 30 second ticker
 	go func() {
 		for range ticker.C {
 			if deathsights, err := IRE.Sync(); err == nil {
 				for _, event := range deathsights {
-					discord.PostMessage(_config.Discord.Channel, fmt.Sprintf("```%s - %s```", event.Date, event.Description))
+					for _, channel := range _config.Discord.Channel {
+						discord.PostMessage(channel, fmt.Sprintf("```%s - %s```", event.Date, event.Description))
+					}
 				}
 			} else {
 				fmt.Println("ERROR: We couldn't get new deathsights.")
