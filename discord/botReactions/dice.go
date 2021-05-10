@@ -27,6 +27,7 @@ func (d *dice) HelpDetail() string {
 }
 
 var diceRegexp = regexp.MustCompile(`(?i)([0-9]+)d([0-9]+)(?:\+([0-9]+))?`)
+var validSides = [6]int{4, 6, 8, 10, 12, 20}
 
 func (d *dice) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) Reaction {
 	var response string
@@ -40,12 +41,20 @@ func (d *dice) Reaction(m *discordgo.Message, a *discordgo.Member, mType string)
 	if len(dMatch) > 0 {
 		numDice, numSides, addNum, roll := dMatch[1], dMatch[2], dMatch[3], 0
 		if _numDice, err := strconv.Atoi(numDice); err == nil {
-			if _numDice > 20 {
+			if _numDice > 7 {
 				response = "But I have small hands, I can't hold that many dice :frowning:"
+				return Reaction{Text: response}
 			}
 			if _numSides, err := strconv.Atoi(numSides); err == nil {
-				if _numSides > 32 {
-					response = "Wow those are strange die, I don't even know how to roll 'em :confused:"
+				_validNumSides := 0
+				for _, nSide := range validSides {
+					if nSide == _numSides {
+						_validNumSides = nSide
+					}
+				}
+				if _validNumSides == 0 {
+					response = "Wow those are strange dice, I don't even know how to roll 'em :confused:"
+					return Reaction{Text: response}
 				}
 				for dice := 0; dice < _numDice; dice++ {
 					if _numSides > 0 {
@@ -65,6 +74,10 @@ func (d *dice) Reaction(m *discordgo.Message, a *discordgo.Member, mType string)
 
 		if len(addNum) > 0 {
 			if _addNum, err := strconv.Atoi(addNum); err == nil {
+				if _addNum > 99 {
+					response = "Are you trying to cheat here? :open_mouth:"
+					return Reaction{Text: response}
+				}
 				total += _addNum
 				diceRoll = fmt.Sprintf("%s %d", diceRoll, _addNum)
 			} else {
