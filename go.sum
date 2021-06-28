@@ -1,5 +1,5 @@
-github.com/bwmarrin/discordgo v0.22.0 h1:uBxY1HmlVCsW1IuaPjpCGT6A2DBwRn0nvOguQIxDdFM=
-github.com/bwmarrin/discordgo v0.22.0/go.mod h1:c1WtWUGN6nREDmzIpyTp/iD3VYt4Fpx+bVyfBG7JE+M=
+github.com/bwmarrin/discordgo v0.23.1 h1:xlK4/69bpl/VSoCYaKe3BOc9j1HkNopoRdCppRYu8dk=
+github.com/bwmarrin/discordgo v0.23.1/go.mod h1:c1WtWUGN6nREDmzIpyTp/iD3VYt4Fpx+bVyfBG7JE+M=
 github.com/dustin/go-humanize v1.0.0 h1:VSnTsYCnlFHaM2/igO1h6X3HA71jcobQuxemgkq4zYo=
 github.com/dustin/go-humanize v1.0.0/go.mod h1:HtrtbFcZ19U5GC7JDqmcUSB87Iq5E25KnS6fMYU6eOk=
 github.com/go-sql-driver/mysql v1.5.0 h1:ozyZYNQW3x3HtqT1jira07DN2PArx2v7/mN66gGcHOs=

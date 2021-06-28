@@ -3,7 +3,7 @@ module github.com/adayoung/ada-bot
 go 1.16
 
 require (
-	github.com/bwmarrin/discordgo v0.22.0
+	github.com/bwmarrin/discordgo v0.23.1
 	github.com/dustin/go-humanize v1.0.0
 	github.com/jmoiron/sqlx v1.3.4
 	github.com/lib/pq v1.10.2
