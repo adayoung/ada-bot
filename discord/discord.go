@@ -84,7 +84,7 @@ func ready(s *discordgo.Session, r *discordgo.Ready) {
 		}
 		fmt.Println("----------------------------------")
 	}
-	if err := s.UpdateStatus(0, "play.achaea.com"); err != nil {
+	if err := s.UpdateGameStatus(0, "play.achaea.com"); err != nil {
 		log.Printf("warning: discordgo.Session.UpdateStatus: %v", err) // Not a fatal error
 	}
 }
@@ -114,7 +114,7 @@ func _botReactions(s *discordgo.Session, m *discordgo.Message, mType string) {
 		return // let's not bother with a message without an Author!@
 	}
 
-	if channel, err := s.State.Channel(m.ChannelID); err == nil {
+	if channel, err := s.Channel(m.ChannelID); err == nil {
 		guildID := channel.GuildID
 
 		if guildID == "" { // log direct messages sent to the bot
