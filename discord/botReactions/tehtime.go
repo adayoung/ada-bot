@@ -75,7 +75,7 @@ func (t *tehtime) Reaction(m *discordgo.Message, a *discordgo.Member, mType stri
 
 		if cz, ok := commonZones[strings.ToUpper(timezone)]; ok {
 			timezone = cz
-			timezoneExtra = " " + cz
+			timezoneExtra = " (" + cz + ")"
 		}
 
 		timezone = strings.Title(strings.ToLower(timezone))
@@ -89,7 +89,7 @@ func (t *tehtime) Reaction(m *discordgo.Message, a *discordgo.Member, mType stri
 		timezoneSplitLast := timezoneSplit[len(timezoneSplit) - 1]
 		if cz, ok := underscoreExceptions[strings.ToLower(timezoneSplitLast)]; ok {
 			timezone = cz
-			timezoneExtra = " " + cz
+			timezoneExtra = " (" + cz + ")"
 		}
 
 		if len(timezone) > 0 {
