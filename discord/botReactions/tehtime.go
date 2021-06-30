@@ -4,6 +4,7 @@ import (
 	"regexp"
 	"strings"
 	"time"
+	_ "time/tzdata"
 
 	"github.com/adayoung/ada-bot/settings"
 	"github.com/bwmarrin/discordgo"
