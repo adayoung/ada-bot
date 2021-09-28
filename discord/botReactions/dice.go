@@ -30,16 +30,19 @@ var diceRegexp = regexp.MustCompile(`(?i)([0-9]+)d([0-9]+)(?:\+([0-9]+))?`)
 var validSides = [6]int{4, 6, 8, 10, 12, 20}
 
 func (d *dice) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) Reaction {
-	var response string
+	var numDice, numSides, addNum, response string
+	var roll int
+
 	request := strings.TrimSpace(m.Content[len(settings.Settings.Discord.BotPrefix)+len(d.Trigger):])
 	if !(len(request) > 0) {
 		request = "1d6"
 	}
 	diceRoll := ""
 	total := 0
+
 	dMatch := diceRegexp.FindStringSubmatch(request)
 	if len(dMatch) > 0 {
-		numDice, numSides, addNum, roll := dMatch[1], dMatch[2], dMatch[3], 0
+		numDice, numSides, addNum, roll = dMatch[1], dMatch[2], dMatch[3], 0
 		if _numDice, err := strconv.Atoi(numDice); err == nil {
 			if _numDice > 7 {
 				response = "But I have small hands, I can't hold that many dice :frowning:"
@@ -83,11 +86,13 @@ func (d *dice) Reaction(m *discordgo.Message, a *discordgo.Member, mType string)
 			} else {
 				log.Printf("error: %v", err) // Non fatal error at strconv.Atoi() call
 			}
+		} else {
+			addNum = "0"
 		}
 	}
 
 	if len(diceRoll) > 0 {
-		response = fmt.Sprintf("```Dice roll [%s]: %s\tTotal: %d```", request, diceRoll, total)
+		response = fmt.Sprintf("```Dice roll [%sd%s+%s]: %s\tTotal: %d```", numDice, numSides, addNum, diceRoll, total)
 	}
 	return Reaction{Text: response}
 }
