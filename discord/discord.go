@@ -126,7 +126,6 @@ func _botReactions(s *discordgo.Session, m *discordgo.Message, mType string) {
 		var member *discordgo.Member
 		if m.Author != nil {
 			if member, err = s.State.Member(guildID, m.Author.ID); err != nil {
-				member = nil
 				log.Printf("warning: discordgo.Session.State.Member: %v", err) // Non-fatal error at s.State.Member() call
 				return                                                         // This is usually followed by a crash, obviously a fatal error! Oops D:
 			}

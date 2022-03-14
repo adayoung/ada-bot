@@ -42,7 +42,7 @@ func (d *dice) Reaction(m *discordgo.Message, a *discordgo.Member, mType string)
 
 	dMatch := diceRegexp.FindStringSubmatch(request)
 	if len(dMatch) > 0 {
-		numDice, numSides, addNum, roll = dMatch[1], dMatch[2], dMatch[3], 0
+		numDice, numSides, addNum = dMatch[1], dMatch[2], dMatch[3]
 		if _numDice, err := strconv.Atoi(numDice); err == nil {
 			if _numDice > 7 {
 				response = "But I have small hands, I can't hold that many dice :frowning:"
