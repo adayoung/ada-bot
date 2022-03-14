@@ -35,11 +35,11 @@ var underscoreExceptions = map[string]string {
 	"isle_of_man": "Europe/Isle_of_Man",
 }
 
-type tehtime struct {
+type thetime struct {
 	Trigger string
 }
 
-func (t *tehtime) Help() string {
+func (t *thetime) Help() string {
 	return "What's teh time?! Try something like " +
 		settings.Settings.Discord.BotPrefix +
 		"time Europe/Paris +6h or " +
@@ -47,11 +47,11 @@ func (t *tehtime) Help() string {
 		"time EDT"
 }
 
-func (t *tehtime) HelpDetail() string {
+func (t *thetime) HelpDetail() string {
 	return t.Help()
 }
 
-func (t *tehtime) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) Reaction {
+func (t *thetime) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) Reaction {
 	timeNow := time.Now()
 	timezoneExtra := ""
 
@@ -140,8 +140,8 @@ func (t *tehtime) Reaction(m *discordgo.Message, a *discordgo.Member, mType stri
 }
 
 func init() {
-	_tehtime := &tehtime{
+	_thetime := &thetime{
 		Trigger: "time",
 	}
-	addReaction(_tehtime.Trigger, "CREATE", _tehtime)
+	addReaction(_thetime.Trigger, "CREATE", _thetime)
 }

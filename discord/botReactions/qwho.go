@@ -48,6 +48,10 @@ func (q *qwhoTrigger) HelpDetail() string {
 }
 
 func (q *qwhoTrigger) Reaction(m *discordgo.Message, a *discordgo.Member, mType string) Reaction {
+	if a.GuildID == "" {
+		return Reaction{Text: "Oops, we don't do qwho on direct messages anymore. Please see https://www.achaea.com/portal/ instead!"}
+	}
+
 	q.Lock() // This, because we're maintaining state in the trigger itself
 	defer q.Unlock()
 
@@ -62,6 +66,7 @@ func (q *qwhoTrigger) Reaction(m *discordgo.Message, a *discordgo.Member, mType 
 		)}
 	} else {
 		q.qWhoLast = timeNow
+		q.qWhoLastUsedBy = "Unknown"
 		if a != nil {
 			if a.Nick != "" {
 				q.qWhoLastUsedBy = a.Nick

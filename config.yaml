@@ -1,8 +1,8 @@
 discord:
   botkey: "Paste the Bot User's token from https://discordapp.com/developers/applications/me here"
   channel:
-    - "deathsightChannel1"
-    - "deathsightChannel2"
+    - "deathsightChannelID_1"
+    - "deathsightChannelID_2"
   qlength: 64
   waitms: "500ms"
 
