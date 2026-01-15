@@ -20,7 +20,7 @@ type character struct {
 }
 
 type qwho struct {
-	Count      string      `json:"count"`
+	Count      int         `json:"count"`
 	Characters []character `json:"characters"`
 }
 
@@ -95,7 +95,7 @@ func (q *qwhoTrigger) Reaction(m *discordgo.Message, a *discordgo.Member, mType 
 		}
 		response = fmt.Sprintf("%sPlayers: %s", response, strings.Join(characters, ", "))
 		response = fmt.Sprintf("%s\nVisible: %d", response, len(_results.Characters))
-		response = fmt.Sprintf("%s\nTotal: %s", response, _results.Count)
+		response = fmt.Sprintf("%s\nTotal: %d", response, _results.Count)
 	} else {
 		log.Printf("error: %v", err) // Non fatal error at httpclient.GetJSON() call
 	}
